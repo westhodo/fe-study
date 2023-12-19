@@ -66,10 +66,10 @@
 
       const xPos = this.renderOptions.width
       const yPos = this.renderOptions.height
-      const thick = 20
-      const gap = 10
+      const thick = 2
+      const gap = 2
 
-      const bottom = this.Bodies.rectangle(xPos / 2, yPos - gap, xPos, thick, this.customRender('transparent'))
+      const bottom = this.Bodies.rectangle(xPos / 2, yPos, xPos, 50, this.customRender('transparent'))
       const left = this.Bodies.rectangle(gap, yPos / 2, thick, xPos + yPos, this.customRender('transparent'))
       const right = this.Bodies.rectangle(xPos - gap, yPos / 2, thick, xPos + yPos, this.customRender('transparent'))
 
