@@ -72,11 +72,8 @@
       const bottom = this.Bodies.rectangle(xPos / 2, yPos - gap, xPos, thick, this.customRender('transparent'))
       const left = this.Bodies.rectangle(gap, yPos / 2, thick, xPos + yPos, this.customRender('transparent'))
       const right = this.Bodies.rectangle(xPos - gap, yPos / 2, thick, xPos + yPos, this.customRender('transparent'))
-      const background = this.Bodies.rectangle((xPos / 2) - thick, yPos / 2, xPos + (thick * 2), yPos + gap, this.customRender('#FEE4BF'))
-      background.collisionFilter = { group: 0, category: 1, mask: -2 }
 
-
-      this.World.add(this.engine.world, [bottom, left, right, background])
+      this.World.add(this.engine.world, [bottom, left, right])
 
       this.Engine.run(this.engine)
       this.Render.run(this.render)
@@ -255,7 +252,6 @@
     },
     data() {
       return {
-        test: null,
         /* recycle Matter */
         ball: null,
         world: undefined,
@@ -274,7 +270,6 @@
         fps: 100,
         updateSize: 1,
         iconArray: [icon1, icon2, icon3, icon4, icon5, icon6, icon7, icon8, icon9, icon10, icon11],
-
 
         /* import Matter */
         Engine: Engine,
@@ -318,4 +313,7 @@
 </script>
 
 <style>
+  canvas {
+    background: url('../assets/img/bg.png') 50% 50% no-repeat !important;
+  }
 </style>
