@@ -1,5 +1,8 @@
 <template>
-  <div class="game">
+  <div
+    class="gameContainer"
+    :class="{ 'pc' : !isMobile }"
+  >
     <canvas ref="ctx"
       @mouseover="isMouseEvt = true"
       @mouseup="isClickEvt = false"
@@ -10,7 +13,13 @@
       @touchmove="mouseEvtHandler"
       @touchend="isClickEvt = false"
       @touchstart="isClickEvt = true"
+      @resize="resize"
     />
+
+    <p>mobile : {{ isMobile }}</p>
+    <p>x : {{ getMouseXpos }}</p>
+    <p>mouse : {{ isClickEvt }}</p>
+    <p>touch : {{ isMouseEvt }}</p>
   </div>
 </template>
 
@@ -49,7 +58,7 @@
     name: "game",
     components: {},
     computed: {
-      isMobile() {
+      isMobile () {
         return window.innerHeight / window.innerWidth >= 1.49
       }
     },
@@ -77,9 +86,11 @@
 
       this.Engine.run(this.engine)
       this.Render.run(this.render)
+      window.addEventListener("resize", this.resize)
 
       this.beforeUpdate()
       this.init()
+      this.resize()
 
       this.Events.on(this.engine, "collisionActive", this.crushBallEvtHandler)
       this.Events.on(this.engine, "collisionStart", this.crushBallEvtHandler)
@@ -88,7 +99,9 @@
         min: { x: 0, y: 0 },
         max: { x: this.renderOptions.width, y: this.renderOptions.height }
       })
-      this.Render.run(this.render)
+    },
+    unmounted() {
+      window.removeEventListener("resize", this.resize);
     },
     methods: {
       init () {
@@ -159,7 +172,7 @@
             this.ball.position.y = 50
           }
 
-          // this.isLineEnable = false
+          // this.isOverLine = false
           const bodies = Composite.allBodies(this.engine.world)
           for (let i = 4; i < bodies.length; i++) {
             this.body = bodies[i]
@@ -178,7 +191,7 @@
                 Math.abs(this.body.velocity.x) < 0.5 &&
                 Math.abs(this.body.velocity.y) < 0.5
               ) {
-                // isLineEnable = true
+                // isOverLine = true
               }
             }
           }
@@ -187,11 +200,8 @@
       },
       resize() {
         if (this.isMobile) {
-          // mobile
-        } else {
-          // pc
+          this.$refs.ctx.style.zoom = window.innerWidth / this.renderOptions.width;
         }
-        // Render.setPixelRatio(this.render, this.$refs.game.style.zoom * 2)
       },
       mouseEvtHandler (e) {
         if (this.gameOver) return
@@ -270,6 +280,7 @@
         fps: 100,
         updateSize: 1,
         iconArray: [icon1, icon2, icon3, icon4, icon5, icon6, icon7, icon8, icon9, icon10, icon11],
+        isOverLine: false,
 
         /* import Matter */
         Engine: Engine,
@@ -313,7 +324,12 @@
 </script>
 
 <style>
-  canvas {
-    background: url('../assets/img/bg.png') 50% 50% no-repeat !important;
-  }
+body {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+.gameContainer { text-align: left; }
+.gameContainer.pc { text-align: center; }
+canvas { background: url('../assets/img/bg.png') 50% 50% no-repeat !important; }
 </style>
