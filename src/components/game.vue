@@ -18,7 +18,7 @@
 
     <p>mobile : {{ isMobile }}</p>
     <p>x : {{ getMouseXpos }}</p>
-    <p>mouse : {{ isClickEvt }}</p>
+    <p>click : {{ isClickEvt }}</p>
     <p>touch : {{ isMouseEvt }}</p>
   </div>
 </template>
