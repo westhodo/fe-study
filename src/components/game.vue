@@ -10,11 +10,12 @@
       @mouseout="isMouseEvt = false"
       @mousemove="mouseEvtHandler"
       @click="clickEvtHandler"
-      @touchmove="mouseEvtHandler"
       @touchend="isClickEvt = false"
-      @touchstart="isClickEvt = true"
       @resize="resize"
     />
+      <!-- @touchstart="isClickEvt = true" -->
+    <!-- @touchmove="mouseEvtHandler" -->
+
 
     <p>mobile : {{ isMobile }}</p>
     <p>x : {{ getMouseXpos }}</p>
@@ -84,7 +85,7 @@
 
       this.World.add(this.engine.world, [bottom, left, right])
 
-      this.Engine.run(this.engine)
+      this.Runner.run(this.engine)
       this.Render.run(this.render)
       window.addEventListener("resize", this.resize)
 
