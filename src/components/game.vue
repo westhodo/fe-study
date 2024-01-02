@@ -1,27 +1,27 @@
 <template>
   <div
-    class="gameContainer"
+    class="container"
     :class="{ 'pc' : !isMobile }"
   >
-    <canvas ref="ctx"
-      @mouseover="isMouseEvt = true"
-      @mouseup="isClickEvt = false"
-      @mousedown="isClickEvt = isMouseEvt"
-      @mouseout="isMouseEvt = false"
-      @mousemove="mouseEvtHandler"
-      @click="clickEvtHandler"
-      @touchend="isClickEvt = false"
-      @resize="resize"
-    />
-      <!-- @touchstart="isClickEvt = true" -->
-    <!-- @touchmove="mouseEvtHandler" -->
-
-
-    <p>mobile : {{ isMobile }}</p>
-    <p>x : {{ getMouseXpos }}</p>
-    <p>click : {{ isClickEvt }}</p>
-    <p>touch : {{ isMouseEvt }}</p>
-  </div>
+      <div class="overlay"
+        v-if="gameOver"
+        :style="`width:${this.renderOptions.width}px; height: ${this.renderOptions.height}px`"
+      >
+        <button @click="init">RE-START</button>
+      </div>
+      <canvas ref="ctx"
+        @mouseover="isMouseEvt = true"
+        @mouseup="isClickEvt = false"
+        @mousedown="isClickEvt = isMouseEvt"
+        @mouseout="isMouseEvt = false"
+        @mousemove="mouseEvtHandler"
+        @click="clickEvtHandler"
+        @touchend="isClickEvt = false"
+        @resize="resize"
+        @touchstart="isClickEvt = true"
+        @touchmove="mouseEvtHandler"
+      />
+    </div>
 </template>
 
 <script>
@@ -53,7 +53,6 @@
   import icon9 from "../assets/img/9.svg"
   import icon10 from "../assets/img/10.svg"
   import icon11 from "../assets/img/11.svg"
-  // import backgroundImg from "../assets/img/bg.png"
 
   export default {
     name: "game",
@@ -64,48 +63,50 @@
       }
     },
     mounted() {
-      this.engine = this.Engine.create()
-      this.world = this.engine.world
-
-      this.render = this.Render.create({
-        element: this.$el,
-        engine: this.engine,
-        canvas: this.$refs.ctx,
-        options: this.renderOptions
-      })
-
-      const xPos = this.renderOptions.width
-      const yPos = this.renderOptions.height
-      const thick = 2
-      const gap = 2
-
-      const bottom = this.Bodies.rectangle(xPos / 2, yPos, xPos, 50, this.customRender('transparent'))
-      const left = this.Bodies.rectangle(gap, yPos / 2, thick, xPos + yPos, this.customRender('transparent'))
-      const right = this.Bodies.rectangle(xPos - gap, yPos / 2, thick, xPos + yPos, this.customRender('transparent'))
-
-      this.World.add(this.engine.world, [bottom, left, right])
-
-      this.Runner.run(this.engine)
-      this.Render.run(this.render)
-      window.addEventListener("resize", this.resize)
-
-      this.beforeUpdate()
       this.init()
-      this.resize()
-
-      this.Events.on(this.engine, "collisionActive", this.crushBallEvtHandler)
-      this.Events.on(this.engine, "collisionStart", this.crushBallEvtHandler)
-
-      this.Render.lookAt(this.render, {
-        min: { x: 0, y: 0 },
-        max: { x: this.renderOptions.width, y: this.renderOptions.height }
-      })
+      window.addEventListener("resize", this.resize)
     },
     unmounted() {
       window.removeEventListener("resize", this.resize);
     },
     methods: {
       init () {
+        this.engine = this.Engine.create()
+        this.world = this.engine.world
+
+        this.render = this.Render.create({
+          element: this.$el,
+          engine: this.engine,
+          canvas: this.$refs.ctx,
+          options: this.renderOptions
+        })
+
+        const xPos = this.renderOptions.width
+        const yPos = this.renderOptions.height
+        const thick = 2
+        const gap = 2
+
+        const bottom = this.Bodies.rectangle(xPos / 2, yPos, xPos, 50, this.customRender('transparent'))
+        const left = this.Bodies.rectangle(gap, yPos / 2, thick, xPos + yPos, this.customRender('transparent'))
+        const right = this.Bodies.rectangle(xPos - gap, yPos / 2, thick, xPos + yPos, this.customRender('transparent'))
+
+        this.World.add(this.engine.world, [bottom, left, right])
+
+        this.Runner.run(this.engine)
+        this.Render.run(this.render)
+        this.beforeUpdate()
+        this.start()
+        this.resize()
+
+        this.Events.on(this.engine, "collisionActive", this.crushBallEvtHandler)
+        this.Events.on(this.engine, "collisionStart", this.crushBallEvtHandler)
+        this.Events.on(this.render, "afterRender", this.afterRender)
+        this.Render.lookAt(this.render, {
+          min: { x: 0, y: 0 },
+          max: { x: this.renderOptions.width, y: this.renderOptions.height }
+        })
+      },
+      start () {
         this.gameOver = false
         this.ball = null
         this.engine.timing.timeScale = 1
@@ -173,7 +174,6 @@
             this.ball.position.y = 50
           }
 
-          // this.isOverLine = false
           const bodies = Composite.allBodies(this.engine.world)
           for (let i = 4; i < bodies.length; i++) {
             this.body = bodies[i]
@@ -184,22 +184,31 @@
                 Math.abs(this.body.velocity.x) < 0.2 &&
                 Math.abs(this.body.velocity.y) < 0.2
               ) {
-                // gameOver()
-              }
-            } else if (this.body.position.y < 150) {
-              if (
-                this.body !== this.ball &&
-                Math.abs(this.body.velocity.x) < 0.5 &&
-                Math.abs(this.body.velocity.y) < 0.5
-              ) {
-                // isOverLine = true
+                this.gameEnd()
               }
             }
           }
         })
-
       },
-      resize() {
+      afterRender () {
+        const ctx = this.$refs.ctx.getContext("2d");
+        if (this.gameOver) {
+          ctx.fillStyle = "#ffffff55";
+          ctx.rect(0, 0, 480, 720);
+          ctx.fill();
+        } else {
+          ctx.strokeStyle = "#f55";
+          ctx.beginPath();
+          ctx.moveTo(0, 100);
+          ctx.lineTo(480, 100);
+          ctx.stroke();
+        }
+      },
+      gameEnd () {
+        this.gameOver = true;
+        this.engine.timing.timeScale = 0;
+      },
+      resize () {
         if (this.isMobile) {
           this.$refs.ctx.style.zoom = window.innerWidth / this.renderOptions.width;
         }
@@ -281,7 +290,6 @@
         fps: 100,
         updateSize: 1,
         iconArray: [icon1, icon2, icon3, icon4, icon5, icon6, icon7, icon8, icon9, icon10, icon11],
-        isOverLine: false,
 
         /* import Matter */
         Engine: Engine,
@@ -325,12 +333,12 @@
 </script>
 
 <style>
-body {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
-.gameContainer { text-align: left; }
-.gameContainer.pc { text-align: center; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { width: 100%; height: 100vh; display: flex; align-items: center; justify-content: center; background-color: #000;}
+.container { position: relative; }
+.container.pc { width: 100%; height: 100%; text-align: center;}
+.overlay { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 100%; height: 100%; background-color: rgba(0, 0, 0, .5); display: flex; align-items: center; justify-content: center; }
+.overlay button { display: block; background-color: #FFDD86; outline: none; border: 3px solid #FFDD86; padding: 1em 3em; border-radius: 50px; box-shadow: 0px 5px 3px rgba(0, 0, 0, .5);}
+.overlay button:active { box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, .5) inset; }
 canvas { background: url('../assets/img/bg.png') 50% 50% no-repeat !important; }
 </style>
