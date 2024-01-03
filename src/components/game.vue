@@ -17,7 +17,6 @@
         @mousemove="mouseEvtHandler"
         @click="clickEvtHandler"
         @touchend="isClickEvt = false"
-        @resize="resize"
         @touchstart="isClickEvt = true"
         @touchmove="mouseEvtHandler"
       />
@@ -57,11 +56,7 @@
   export default {
     name: "game",
     components: {},
-    computed: {
-      isMobile () {
-        return window.innerHeight / window.innerWidth >= 1.49
-      }
-    },
+    computed: {},
     mounted() {
       this.init()
       window.addEventListener("resize", this.resize)
@@ -116,13 +111,6 @@
 
         this.createBall(1)
       },
-      mousePos(canvas, e) {
-        const rect = canvas.getBoundingClientRect()
-        return {
-          x: e.clientX - rect.left,
-          y: e.clientY - rect.top
-        }
-      },
       createBall(size) {
         this.ball = this.newBall(this.render.options.width / 2, 50, size)
         this.ball.collisionFilter = {
@@ -169,7 +157,6 @@
               x: -gravity.x * gravity.scale * this.ball.mass,
               y: -gravity.y * gravity.scale * this.ball.mass,
             })
-
             if (this.isClickEvt && this.getMouseXpos) this.ball.position.x = this.getMouseXpos
             this.ball.position.y = 50
           }
@@ -209,18 +196,19 @@
         this.engine.timing.timeScale = 0;
       },
       resize () {
-        if (this.isMobile) {
-          this.$refs.ctx.style.zoom = window.innerWidth / this.renderOptions.width;
-        }
+        this.isMobile = window.innerHeight / window.innerWidth >= 1.49
+        if (this.isMobile) this.$refs.ctx.style.zoom = window.innerWidth / this.renderOptions.width;
+        else  this.$refs.ctx.style.zoom = 1
       },
       mouseEvtHandler (e) {
         if (this.gameOver) return
 
-        const rect = this.render.canvas.getBoundingClientRect()
+        const rect = this.$refs.ctx.getBoundingClientRect()
         this.getMouseXpos = e.clientX - rect.left
+        console.log(this.getMouseXpos, 'mouseX')
       },
       clickEvtHandler () {
-        if (this.gameOver || !this.isMouseEvt) return
+        if (this.gameOver) return
 
         if (this.ball) {
           this.ball.createdAt = 0
@@ -290,6 +278,7 @@
         fps: 100,
         updateSize: 1,
         iconArray: [icon1, icon2, icon3, icon4, icon5, icon6, icon7, icon8, icon9, icon10, icon11],
+        isMobile: false,
 
         /* import Matter */
         Engine: Engine,
