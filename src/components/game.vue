@@ -78,7 +78,7 @@
 
         const xPos = this.renderOptions.width
         const yPos = this.renderOptions.height
-        const thick = 2
+        const thick = 5
         const gap = 2
 
         const bottom = this.Bodies.rectangle(xPos / 2, yPos, xPos, 50, this.customRender('transparent'))
@@ -89,9 +89,9 @@
 
         this.Runner.run(this.engine)
         this.Render.run(this.render)
-        this.beforeUpdate()
+
+        this.Events.on(this.engine, "beforeUpdate", this.beforeUpdate)
         this.start()
-        this.resize()
 
         this.Events.on(this.engine, "collisionActive", this.crushBallEvtHandler)
         this.Events.on(this.engine, "collisionStart", this.crushBallEvtHandler)
@@ -147,7 +147,6 @@
         }
       },
       beforeUpdate () {
-        this.Events.on(this.engine, "beforeUpdate", () => {
           if (this.gameOver) return
 
           if (this.ball) {
@@ -175,7 +174,6 @@
               }
             }
           }
-        })
       },
       afterRender () {
         const ctx = this.$refs.ctx.getContext("2d");
@@ -217,7 +215,7 @@
 
           this.updateSize = Math.ceil(Math.random() * 3)
 
-          setTimeout(() => this.createBall(this.updateSize), 500)
+          setTimeout(() => this.createBall(this.updateSize), 300)
         }
       },
       crushBallEvtHandler (e) {
