@@ -202,10 +202,8 @@
       },
       mouseEvtHandler (e) {
         if (this.gameOver) return
-
         const rect = this.$refs.ctx.getBoundingClientRect()
-        this.getMouseXpos = e.clientX - rect.left
-        console.log(this.getMouseXpos, 'mouseX')
+        this.getMouseXpos = (e?.clientX || e?.touches[0]?.clientX) - rect.left
       },
       clickEvtHandler () {
         if (this.gameOver) return
@@ -323,7 +321,7 @@
 
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { width: 100%; height: 100vh; display: flex; align-items: center; justify-content: center; background-color: #000;}
+body { overflow: hidden; position: fixed; width: 100%; height: 100vh; display: flex; align-items: center; justify-content: center; background-color: #000; }
 .container { position: relative; }
 .container.pc { width: 100%; height: 100%; text-align: center;}
 .overlay { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 100%; height: 100%; background-color: rgba(0, 0, 0, .5); display: flex; align-items: center; justify-content: center; }
