@@ -283,7 +283,7 @@
                   this.sumBalls[0].size === 11 ? 11 : this.sumBalls[0].size + 1
                 )
               )
-              if (this.sumBalls[0].size === 11) this.complete = true
+              if (this.sumBalls[0].size === 10) this.complete = true
             }
           }
         })
