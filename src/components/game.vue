@@ -3,12 +3,29 @@
     class="container"
     :class="{ 'pc' : !isMobile }"
   >
-      <div class="overlay"
-        v-if="gameOver"
-        :style="`width:${this.renderOptions.width}px; height: ${this.renderOptions.height}px`"
+      <div
+        class="overlay"
+        :class="{ 'success' : complete}"
+        :style="`width:${this.renderOptions.width}px; height: ${this.renderOptions.height}px; zoom: ${isMobile ? zoom : 1};`"
+        v-if="gameOver || complete"
       >
-        <button @click="init">RE-START</button>
+        <div class="box">
+          <div
+            class="line"
+            :class="{ 'start' : gameOver || complete }"
+          >
+            <p>{{ complete ? '성공' : '실패' }}</p>
+            <ul v-if="complete">
+              <li v-for="index in 5" :key="index">
+                <img src="@/assets/img/star.png" alt="">
+              </li>
+            </ul>
+          </div>
+          <img src="@/assets/img/flag.png" alt="" v-if="complete">
+          <button @click="init">RETRY</button>
+        </div>
       </div>
+
       <canvas ref="ctx"
         @mouseover="isMouseEvt = true"
         @mouseup="isClickEvt = false"
@@ -16,8 +33,8 @@
         @mouseout="isMouseEvt = false"
         @mousemove="mouseEvtHandler"
         @click="clickEvtHandler"
-        @touchend="isClickEvt = false"
-        @touchstart="isClickEvt = true"
+        @touchend="clickEvtHandler"
+        @touchstart.stop.prevent="touchEvtHandler"
         @touchmove="mouseEvtHandler"
       />
     </div>
@@ -92,6 +109,7 @@
 
         this.Events.on(this.engine, "beforeUpdate", this.beforeUpdate)
         this.start()
+        this.resize()
 
         this.Events.on(this.engine, "collisionActive", this.crushBallEvtHandler)
         this.Events.on(this.engine, "collisionStart", this.crushBallEvtHandler)
@@ -103,6 +121,7 @@
       },
       start () {
         this.gameOver = false
+        this.complete = false
         this.ball = null
         this.engine.timing.timeScale = 1
         this.score = 0
@@ -156,7 +175,23 @@
               x: -gravity.x * gravity.scale * this.ball.mass,
               y: -gravity.y * gravity.scale * this.ball.mass,
             })
-            if (this.isClickEvt && this.getMouseXpos) this.ball.position.x = this.getMouseXpos
+
+            if (this.isClickEvt && this.getMouseXpos) {
+              this.ball.position.x = this.getMouseXpos
+
+              const ballSize = {
+                1: 15,
+                2: 25,
+                3: 35
+              }[this.ball.size]
+
+              const width = this.isMobile ? window.innerWidth + 20 : this.render.canvas.width - 5
+
+              if (this.getMouseXpos > width) this.ball.position.x = width - ballSize
+              else if (this.getMouseXpos < ballSize) this.ball.position.x = ballSize
+
+            }
+
             this.ball.position.y = 50
           }
 
@@ -165,23 +200,16 @@
             this.body = bodies[i]
 
             if (this.body.position.y < 100) {
-              if (
-                this.body !== this.ball &&
-                Math.abs(this.body.velocity.x) < 0.2 &&
-                Math.abs(this.body.velocity.y) < 0.2
-              ) {
-                this.gameEnd()
-              }
+              if (this.body !== this.ball && Math.abs(this.body.velocity.x) < 0.2 && Math.abs(this.body.velocity.y) < 0.2) this.gameEnd()
+            }
+            if (this.body.position.y < 150) {
+              if (this.body !== this.ball && Math.abs(this.body.velocity.x) < 0.2 && Math.abs(this.body.velocity.y) < 0.2) this.isOverLine = true
             }
           }
       },
       afterRender () {
         const ctx = this.$refs.ctx.getContext("2d");
-        if (this.gameOver) {
-          ctx.fillStyle = "#ffffff55";
-          ctx.rect(0, 0, 480, 720);
-          ctx.fill();
-        } else {
+        if (!this.gameOver && this.isOverLine) {
           ctx.strokeStyle = "#f55";
           ctx.beginPath();
           ctx.moveTo(0, 100);
@@ -195,13 +223,19 @@
       },
       resize () {
         this.isMobile = window.innerHeight / window.innerWidth >= 1.49
-        if (this.isMobile) this.$refs.ctx.style.zoom = window.innerWidth / this.renderOptions.width;
+        this.zoom = window.innerWidth / this.renderOptions.width
+        if (this.isMobile) this.$refs.ctx.style.zoom = this.zoom;
         else  this.$refs.ctx.style.zoom = 1
+      },
+      touchEvtHandler (e) {
+        this.isClickEvt = true
+        this.getMouseXpos = e.touches[0].clientX / this.$refs.ctx.style.zoom;
       },
       mouseEvtHandler (e) {
         if (this.gameOver) return
         const rect = this.$refs.ctx.getBoundingClientRect()
-        this.getMouseXpos = (e?.clientX || e?.touches[0]?.clientX) - rect.left
+        if (this.isMobile) this.getMouseXpos = (e?.clientX || e?.touches[0]?.clientX) / this.$refs.ctx.style.zoom - rect.left
+        else this.getMouseXpos = e?.clientX - rect.left
       },
       clickEvtHandler () {
         if (this.gameOver) return
@@ -215,7 +249,7 @@
 
           this.updateSize = Math.ceil(Math.random() * 3)
 
-          setTimeout(() => this.createBall(this.updateSize), 300)
+          setTimeout(() => this.createBall(this.updateSize), 500)
         }
       },
       crushBallEvtHandler (e) {
@@ -249,6 +283,7 @@
                   this.sumBalls[0].size === 11 ? 11 : this.sumBalls[0].size + 1
                 )
               )
+              if (this.sumBalls[0].size === 11) this.complete = true
             }
           }
         })
@@ -268,13 +303,16 @@
 
         /* Game Acc */
         gameOver: false,
+        complete: false,
         getMouseXpos: null,
+        isOverLine: false,
         isClickEvt: false,
         isMouseEvt: false,
         fps: 100,
         updateSize: 1,
         iconArray: [icon1, icon2, icon3, icon4, icon5, icon6, icon7, icon8, icon9, icon10, icon11],
         isMobile: false,
+        zoom: null,
 
         /* import Matter */
         Engine: Engine,
@@ -322,8 +360,35 @@
 body { overflow: hidden; position: fixed; width: 100%; height: 100vh; display: flex; align-items: center; justify-content: center; background-color: #000; }
 .container { position: relative; }
 .container.pc { width: 100%; height: 100%; text-align: center;}
-.overlay { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 100%; height: 100%; background-color: rgba(0, 0, 0, .5); display: flex; align-items: center; justify-content: center; }
-.overlay button { display: block; background-color: #FFDD86; outline: none; border: 3px solid #FFDD86; padding: 1em 3em; border-radius: 50px; box-shadow: 0px 5px 3px rgba(0, 0, 0, .5);}
+.overlay { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 100%; height: 100%; background-color: rgba(0, 0, 0, .3); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.overlay .box { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; z-index: 1; }
+.overlay .box .line { position: absolute; width: 0; height: 80px; top: 10%; left: 0; background-color: #FFDD86; color: #000; border-top: 3px solid; border-bottom: 3px solid; display: inline-flex; align-items: center; justify-content: center; }
+.overlay .box .line.start { animation: widthOpen linear .5s .2s; animation-fill-mode: forwards; }
+.overlay .box .line.start p { animation: isTop linear 1.5s .1s; animation-fill-mode: forwards; opacity: 0; }
+.overlay .box .line.start ul { animation: isBottom linear 1.5s .5s; animation-fill-mode: forwards; opacity: 0; }
+.overlay .box .line ul { width: 100%; display: inline-flex; align-items: center; justify-content: center; list-style: none; gap: 5px; position: absolute; transform: translate(-50%, -50%); left: 50%; }
+.overlay .box .line li { width: 30px; height: 30px; }
+.overlay .box .line li img { width: 100%; height: 100%; object-fit: contain; }
+.overlay .box .line p { font-size: 2rem; font-weight: bold; white-space: nowrap; position: absolute; left: 50%; top: -1000px; transform: translate(-50%, -50%); }
+.overlay .box > img { width: 50%; object-fit: contain; position: absolute; top: 10%; left: 50%; transform: translateX(-50%); z-index: -1;}
+.overlay.success .box img { width: 100%; top: 0; }
+.overlay button { display: block; background-color: #FAB057; outline: none; border: 3px solid #FAB057; padding: 1em 3em; border-radius: 50px; box-shadow: 0px 5px 3px rgba(0, 0, 0, .5); border: 2px solid;}
 .overlay button:active { box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, .5) inset; }
 canvas { background: url('../assets/img/bg.png') 50% 50% no-repeat !important; }
+
+@keyframes widthOpen {
+  0% { width: 0; }
+  100% { width: 100%; }
+}
+
+@keyframes isTop {
+  0% { top: -1000px; opacity: 0; }
+  100% { top: 50%; opacity: 1; }
+}
+
+@keyframes isBottom {
+  0% { bottom: -1000px; opacity: 0; }
+  100% { bottom: -30px; opacity: 1; }
+}
+
 </style>
