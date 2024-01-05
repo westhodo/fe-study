@@ -204,6 +204,7 @@
             }
             if (this.body.position.y < 150) {
               if (this.body !== this.ball && Math.abs(this.body.velocity.x) < 0.2 && Math.abs(this.body.velocity.y) < 0.2) this.isOverLine = true
+              else this.isOverLine = false
             }
           }
       },
@@ -332,7 +333,7 @@
         renderOptions: {
           width: 400,
           height: 600,
-          pixelRatio: 'auto',
+          pixelRatio: 0.8,
           wireframes: false,
           showDebug: false,
           showBroadphase: false,
@@ -362,7 +363,7 @@ body { overflow: hidden; position: fixed; width: 100%; height: 100vh; display: f
 .container.pc { width: 100%; height: 100%; text-align: center;}
 .overlay { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 100%; height: 100%; background-color: rgba(0, 0, 0, .3); display: flex; align-items: center; justify-content: center; overflow: hidden; }
 .overlay .box { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; z-index: 1; }
-.overlay .box .line { position: absolute; width: 0; height: 80px; top: 10%; left: 0; background-color: #FFDD86; color: #000; border-top: 3px solid; border-bottom: 3px solid; display: inline-flex; align-items: center; justify-content: center; }
+.overlay .box .line { position: absolute; width: 0; height: 80px; top: 10%; left: 0; background-color: #FFDD86; color: #000; border-top: 3px solid #000; border-bottom: 3px solid #000; display: inline-flex; align-items: center; justify-content: center; }
 .overlay .box .line.start { animation: widthOpen linear .5s .2s; animation-fill-mode: forwards; }
 .overlay .box .line.start p { animation: isTop linear 1.5s .1s; animation-fill-mode: forwards; opacity: 0; }
 .overlay .box .line.start ul { animation: isBottom linear 1.5s .5s; animation-fill-mode: forwards; opacity: 0; }
