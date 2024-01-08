@@ -1,8 +1,44 @@
 diff --git a/node_modules/matter-js/build/matter.dev.js b/node_modules/matter-js/build/matter.dev.js
-index d006ee8..cd1eca3 100644
+index d006ee8..b442619 100644
 --- a/node_modules/matter-js/build/matter.dev.js
 +++ b/node_modules/matter-js/build/matter.dev.js
-@@ -8600,7 +8600,7 @@ var Mouse = __webpack_require__(14);
+@@ -138,7 +138,7 @@ module.exports = Common;
+ 
+ (function() {
+ 
+-    Common._baseDelta = 1000 / 60;
++    Common._baseDelta = 1000 / 12;
+     Common._nextId = 0;
+     Common._seed = 0;
+     Common._nowStartTime = +(new Date());
+@@ -1609,7 +1609,7 @@ var Axes = __webpack_require__(11);
+     Body._nextCollidingGroupId = 1;
+     Body._nextNonCollidingGroupId = -1;
+     Body._nextCategory = 0x0001;
+-    Body._baseDelta = 1000 / 60;
++    Body._baseDelta = 1000 / 12;
+ 
+     /**
+      * Creates a new rigid body model. The options parameter is an object that specifies any properties you wish to override the defaults.
+@@ -1680,7 +1680,7 @@ var Axes = __webpack_require__(11);
+             area: 0,
+             mass: 0,
+             inertia: 0,
+-            deltaTime: 1000 / 60,
++            deltaTime: 1000 / 12,
+             _original: null
+         };
+ 
+@@ -2319,7 +2319,7 @@ var Axes = __webpack_require__(11);
+      * @param {number} [deltaTime=16.666]
+      */
+     Body.update = function(body, deltaTime) {
+-        deltaTime = (typeof deltaTime !== 'undefined' ? deltaTime : (1000 / 60)) * body.timeScale;
++        deltaTime = (typeof deltaTime !== 'undefined' ? deltaTime : (1000 / 12)) * body.timeScale;
+ 
+         var deltaTimeSquared = deltaTime * deltaTime,
+             correction = Body._timeCorrection ? deltaTime / (body.deltaTime || deltaTime) : 1;
+@@ -8600,14 +8600,14 @@ var Mouse = __webpack_require__(14);
      if (typeof window !== 'undefined') {
          _requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame
                                        || window.mozRequestAnimationFrame || window.msRequestAnimationFrame
@@ -11,6 +47,14 @@ index d006ee8..cd1eca3 100644
  
          _cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame
                                        || window.webkitCancelAnimationFrame || window.msCancelAnimationFrame;
+     }
+ 
+     Render._goodFps = 30;
+-    Render._goodDelta = 1000 / 60;
++    Render._goodDelta = 1000 / 12;
+ 
+     /**
+      * Creates a new renderer. The options parameter is an object that specifies any properties you wish to override the defaults.
 @@ -10449,7 +10449,7 @@ var Common = __webpack_require__(0);
          _requestAnimationFrame = function(callback){
              _frameTimeout = setTimeout(function() {
@@ -21,10 +65,46 @@ index d006ee8..cd1eca3 100644
  
          _cancelAnimationFrame = function() {
 diff --git a/node_modules/matter-js/build/matter.js b/node_modules/matter-js/build/matter.js
-index 533a452..ababd7f 100644
+index 533a452..4f2c35f 100644
 --- a/node_modules/matter-js/build/matter.js
 +++ b/node_modules/matter-js/build/matter.js
-@@ -8599,7 +8599,7 @@ var Mouse = __webpack_require__(14);
+@@ -137,7 +137,7 @@ module.exports = Common;
+ 
+ (function() {
+ 
+-    Common._baseDelta = 1000 / 60;
++    Common._baseDelta = 1000 / 12;
+     Common._nextId = 0;
+     Common._seed = 0;
+     Common._nowStartTime = +(new Date());
+@@ -1608,7 +1608,7 @@ var Axes = __webpack_require__(11);
+     Body._nextCollidingGroupId = 1;
+     Body._nextNonCollidingGroupId = -1;
+     Body._nextCategory = 0x0001;
+-    Body._baseDelta = 1000 / 60;
++    Body._baseDelta = 1000 / 12;
+ 
+     /**
+      * Creates a new rigid body model. The options parameter is an object that specifies any properties you wish to override the defaults.
+@@ -1679,7 +1679,7 @@ var Axes = __webpack_require__(11);
+             area: 0,
+             mass: 0,
+             inertia: 0,
+-            deltaTime: 1000 / 60,
++            deltaTime: 1000 / 12,
+             _original: null
+         };
+ 
+@@ -2318,7 +2318,7 @@ var Axes = __webpack_require__(11);
+      * @param {number} [deltaTime=16.666]
+      */
+     Body.update = function(body, deltaTime) {
+-        deltaTime = (typeof deltaTime !== 'undefined' ? deltaTime : (1000 / 60)) * body.timeScale;
++        deltaTime = (typeof deltaTime !== 'undefined' ? deltaTime : (1000 / 12)) * body.timeScale;
+ 
+         var deltaTimeSquared = deltaTime * deltaTime,
+             correction = Body._timeCorrection ? deltaTime / (body.deltaTime || deltaTime) : 1;
+@@ -8599,14 +8599,14 @@ var Mouse = __webpack_require__(14);
      if (typeof window !== 'undefined') {
          _requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame
                                        || window.mozRequestAnimationFrame || window.msRequestAnimationFrame
@@ -33,6 +113,14 @@ index 533a452..ababd7f 100644
  
          _cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame
                                        || window.webkitCancelAnimationFrame || window.msCancelAnimationFrame;
+     }
+ 
+     Render._goodFps = 30;
+-    Render._goodDelta = 1000 / 60;
++    Render._goodDelta = 1000 / 12;
+ 
+     /**
+      * Creates a new renderer. The options parameter is an object that specifies any properties you wish to override the defaults.
 @@ -10448,7 +10448,7 @@ var Common = __webpack_require__(0);
          _requestAnimationFrame = function(callback){
              _frameTimeout = setTimeout(function() {
@@ -42,24 +130,68 @@ index 533a452..ababd7f 100644
          };
  
          _cancelAnimationFrame = function() {
+diff --git a/node_modules/matter-js/src/body/Body.js b/node_modules/matter-js/src/body/Body.js
+index 5e51075..a90ce22 100644
+--- a/node_modules/matter-js/src/body/Body.js
++++ b/node_modules/matter-js/src/body/Body.js
+@@ -25,7 +25,7 @@ var Axes = require('../geometry/Axes');
+     Body._nextCollidingGroupId = 1;
+     Body._nextNonCollidingGroupId = -1;
+     Body._nextCategory = 0x0001;
+-    Body._baseDelta = 1000 / 60;
++    Body._baseDelta = 1000 / 12;
+ 
+     /**
+      * Creates a new rigid body model. The options parameter is an object that specifies any properties you wish to override the defaults.
+@@ -96,7 +96,7 @@ var Axes = require('../geometry/Axes');
+             area: 0,
+             mass: 0,
+             inertia: 0,
+-            deltaTime: 1000 / 60,
++            deltaTime: 1000 / 12,
+             _original: null
+         };
+ 
+@@ -735,7 +735,7 @@ var Axes = require('../geometry/Axes');
+      * @param {number} [deltaTime=16.666]
+      */
+     Body.update = function(body, deltaTime) {
+-        deltaTime = (typeof deltaTime !== 'undefined' ? deltaTime : (1000 / 60)) * body.timeScale;
++        deltaTime = (typeof deltaTime !== 'undefined' ? deltaTime : (1000 / 12)) * body.timeScale;
+ 
+         var deltaTimeSquared = deltaTime * deltaTime,
+             correction = Body._timeCorrection ? deltaTime / (body.deltaTime || deltaTime) : 1;
+diff --git a/node_modules/matter-js/src/core/Common.js b/node_modules/matter-js/src/core/Common.js
+index face05e..9a64f81 100644
+--- a/node_modules/matter-js/src/core/Common.js
++++ b/node_modules/matter-js/src/core/Common.js
+@@ -10,7 +10,7 @@ module.exports = Common;
+ 
+ (function() {
+ 
+-    Common._baseDelta = 1000 / 60;
++    Common._baseDelta = 1000 / 12;
+     Common._nextId = 0;
+     Common._seed = 0;
+     Common._nowStartTime = +(new Date());
 diff --git a/node_modules/matter-js/src/core/Runner.js b/node_modules/matter-js/src/core/Runner.js
-index dac30f9..6988f6f 100644
+index dac30f9..07fbf50 100644
 --- a/node_modules/matter-js/src/core/Runner.js
 +++ b/node_modules/matter-js/src/core/Runner.js
 @@ -37,7 +37,7 @@ var Common = require('./Common');
-         _requestAnimationFrame = function(callback){
-             _frameTimeout = setTimeout(function() {
-                 callback(Common.now());
+         _requestAnimationFrame = function(callback){ 
+             _frameTimeout = setTimeout(function() { 
+                 callback(Common.now()); 
 -            }, 1000 / 60);
 +            }, 1000 / 12);
          };
  
          _cancelAnimationFrame = function() {
 diff --git a/node_modules/matter-js/src/render/Render.js b/node_modules/matter-js/src/render/Render.js
-index 7c6d65c..60d5a14 100644
+index 7c6d65c..b4c74ce 100644
 --- a/node_modules/matter-js/src/render/Render.js
 +++ b/node_modules/matter-js/src/render/Render.js
-@@ -26,7 +26,7 @@ var Mouse = require('../core/Mouse');
+@@ -26,14 +26,14 @@ var Mouse = require('../core/Mouse');
      if (typeof window !== 'undefined') {
          _requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame
                                        || window.mozRequestAnimationFrame || window.msRequestAnimationFrame
@@ -68,3 +200,11 @@ index 7c6d65c..60d5a14 100644
  
          _cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame
                                        || window.webkitCancelAnimationFrame || window.msCancelAnimationFrame;
+     }
+ 
+     Render._goodFps = 30;
+-    Render._goodDelta = 1000 / 60;
++    Render._goodDelta = 1000 / 12;
+ 
+     /**
+      * Creates a new renderer. The options parameter is an object that specifies any properties you wish to override the defaults.
