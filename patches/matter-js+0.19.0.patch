@@ -1,0 +1,44 @@
+diff --git a/node_modules/matter-js/build/matter.dev.js b/node_modules/matter-js/build/matter.dev.js
+index d006ee8..cd1eca3 100644
+--- a/node_modules/matter-js/build/matter.dev.js
++++ b/node_modules/matter-js/build/matter.dev.js
+@@ -8600,7 +8600,7 @@ var Mouse = __webpack_require__(14);
+     if (typeof window !== 'undefined') {
+         _requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame
+                                       || window.mozRequestAnimationFrame || window.msRequestAnimationFrame
+-                                      || function(callback){ window.setTimeout(function() { callback(Common.now()); }, 1000 / 60); };
++                                      || function(callback){ window.setTimeout(function() { callback(Common.now()); }, 1000 / 12); };
+ 
+         _cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame
+                                       || window.webkitCancelAnimationFrame || window.msCancelAnimationFrame;
+@@ -10449,7 +10449,7 @@ var Common = __webpack_require__(0);
+         _requestAnimationFrame = function(callback){
+             _frameTimeout = setTimeout(function() {
+                 callback(Common.now());
+-            }, 1000 / 60);
++            }, 1000 / 12);
+         };
+ 
+         _cancelAnimationFrame = function() {
+diff --git a/node_modules/matter-js/build/matter.js b/node_modules/matter-js/build/matter.js
+index 533a452..ababd7f 100644
+--- a/node_modules/matter-js/build/matter.js
++++ b/node_modules/matter-js/build/matter.js
+@@ -8599,7 +8599,7 @@ var Mouse = __webpack_require__(14);
+     if (typeof window !== 'undefined') {
+         _requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame
+                                       || window.mozRequestAnimationFrame || window.msRequestAnimationFrame
+-                                      || function(callback){ window.setTimeout(function() { callback(Common.now()); }, 1000 / 60); };
++                                      || function(callback){ window.setTimeout(function() { callback(Common.now()); }, 1000 / 12); };
+ 
+         _cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame
+                                       || window.webkitCancelAnimationFrame || window.msCancelAnimationFrame;
+@@ -10448,7 +10448,7 @@ var Common = __webpack_require__(0);
+         _requestAnimationFrame = function(callback){
+             _frameTimeout = setTimeout(function() {
+                 callback(Common.now());
+-            }, 1000 / 60);
++            }, 1000 / 12);
+         };
+ 
+         _cancelAnimationFrame = function() {
