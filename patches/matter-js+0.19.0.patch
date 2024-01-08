@@ -42,3 +42,29 @@ index 533a452..ababd7f 100644
          };
  
          _cancelAnimationFrame = function() {
+diff --git a/node_modules/matter-js/src/core/Runner.js b/node_modules/matter-js/src/core/Runner.js
+index dac30f9..6988f6f 100644
+--- a/node_modules/matter-js/src/core/Runner.js
++++ b/node_modules/matter-js/src/core/Runner.js
+@@ -37,7 +37,7 @@ var Common = require('./Common');
+         _requestAnimationFrame = function(callback){
+             _frameTimeout = setTimeout(function() {
+                 callback(Common.now());
+-            }, 1000 / 60);
++            }, 1000 / 12);
+         };
+ 
+         _cancelAnimationFrame = function() {
+diff --git a/node_modules/matter-js/src/render/Render.js b/node_modules/matter-js/src/render/Render.js
+index 7c6d65c..60d5a14 100644
+--- a/node_modules/matter-js/src/render/Render.js
++++ b/node_modules/matter-js/src/render/Render.js
+@@ -26,7 +26,7 @@ var Mouse = require('../core/Mouse');
+     if (typeof window !== 'undefined') {
+         _requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame
+                                       || window.mozRequestAnimationFrame || window.msRequestAnimationFrame
+-                                      || function(callback){ window.setTimeout(function() { callback(Common.now()); }, 1000 / 60); };
++                                      || function(callback){ window.setTimeout(function() { callback(Common.now()); }, 1000 / 12); };
+ 
+         _cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame
+                                       || window.webkitCancelAnimationFrame || window.msCancelAnimationFrame;
