@@ -58,17 +58,17 @@
     Events
   } from "matter-js"
 
-  import icon1 from "../assets/img/1.svg"
-  import icon2 from "../assets/img/2.svg"
-  import icon3 from "../assets/img/3.svg"
-  import icon4 from "../assets/img/4.svg"
-  import icon5 from "../assets/img/5.svg"
-  import icon6 from "../assets/img/6.svg"
-  import icon7 from "../assets/img/7.svg"
-  import icon8 from "../assets/img/8.svg"
-  import icon9 from "../assets/img/9.svg"
-  import icon10 from "../assets/img/10.svg"
-  import icon11 from "../assets/img/11.svg"
+  import icon1 from "../assets/img/1.png"
+  import icon2 from "../assets/img/2.png"
+  import icon3 from "../assets/img/3.png"
+  import icon4 from "../assets/img/4.png"
+  import icon5 from "../assets/img/5.png"
+  import icon6 from "../assets/img/6.png"
+  import icon7 from "../assets/img/7.png"
+  import icon8 from "../assets/img/8.png"
+  import icon9 from "../assets/img/9.png"
+  import icon10 from "../assets/img/10.png"
+  import icon11 from "../assets/img/11.png"
 
   export default {
     name: "game",
@@ -328,7 +328,7 @@
         renderOptions: {
           width: 400,
           height: 600,
-          pixelRatio: 'auto',
+          pixelRatio: '0.8',
           wireframes: false,
           showDebug: false,
           showBroadphase: false,
