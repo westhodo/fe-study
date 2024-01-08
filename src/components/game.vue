@@ -202,11 +202,8 @@
             if (this.body.position.y < 100) {
               if (this.body !== this.ball && Math.abs(this.body.velocity.x) < 0.2 && Math.abs(this.body.velocity.y) < 0.2) this.gameEnd()
             }
-            if (this.body.position.y < 150) {
-              if (this.body !== this.ball && Math.abs(this.body.velocity.x) < 0.2 && Math.abs(this.body.velocity.y) < 0.2) this.isOverLine = true
-              else this.isOverLine = false
-            }
           }
+          this.isOverLine = true
       },
       afterRender () {
         const ctx = this.$refs.ctx.getContext("2d");
@@ -269,9 +266,7 @@
                   Date.now() - this.sumBalls[1].createdAt < 100) &&
                 this.sumBalls[0].createdAt !== 0 &&
                 this.sumBalls[1].createdAt !== 0
-              ) {
-                return
-              }
+              ) return
 
               this.World.remove(this.engine.world, this.sumBalls[0])
               this.World.remove(this.engine.world, this.sumBalls[1])
@@ -333,7 +328,7 @@
         renderOptions: {
           width: 400,
           height: 600,
-          pixelRatio: 0.8,
+          pixelRatio: 'auto',
           wireframes: false,
           showDebug: false,
           showBroadphase: false,
