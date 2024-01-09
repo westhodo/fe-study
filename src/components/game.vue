@@ -22,7 +22,7 @@
             </ul>
           </div>
           <img src="@/assets/img/flag.png" alt="" v-if="complete">
-          <button @click="init">RETRY</button>
+          <button @click="retry">RETRY</button>
         </div>
       </div>
 
@@ -129,6 +129,9 @@
         while (this.engine.world.bodies.length > 4) this.engine.world.bodies.pop()
 
         this.createBall(1)
+      },
+      retry () {
+        window.setInterval('location.reload()', 100)
       },
       createBall(size) {
         this.ball = this.newBall(this.render.options.width / 2, 50, size)
