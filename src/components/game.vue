@@ -109,6 +109,7 @@
 
         this.Events.on(this.engine, "beforeUpdate", this.beforeUpdate)
         this.start()
+        this.performance()
         this.resize()
 
         this.Events.on(this.engine, "collisionActive", this.crushBallEvtHandler)
@@ -286,7 +287,18 @@
             }
           }
         })
-      }
+      },
+      performance () {
+        window.requestAnimationFrame(() => {
+          const now = performance.now();
+          while (this.speeds.length > 0 && this.speeds[0] <= now - 1000) {
+            this.speeds.shift();
+          }
+          this.speeds.push(now);
+          this.fps = this.speeds.length;
+          this.performance()
+        })
+      },
     },
     data() {
       return {
@@ -312,6 +324,7 @@
         iconArray: [icon1, icon2, icon3, icon4, icon5, icon6, icon7, icon8, icon9, icon10, icon11],
         isMobile: false,
         zoom: null,
+        speeds: [],
 
         /* import Matter */
         Engine: Engine,
