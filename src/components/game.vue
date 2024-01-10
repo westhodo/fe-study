@@ -183,17 +183,8 @@
             if (this.isClickEvt && this.getMouseXpos) {
               this.ball.position.x = this.getMouseXpos
 
-              const ballSize = {
-                1: 15,
-                2: 25,
-                3: 35
-              }[this.ball.size]
-
-              const width = this.isMobile ? window.innerWidth + 20 : this.render.canvas.width - 5
-
-              if (this.getMouseXpos > width) this.ball.position.x = width - ballSize
-              else if (this.getMouseXpos < ballSize) this.ball.position.x = ballSize
-
+              if (this.getMouseXpos > 455) this.ball.position.x = 455;
+              else if (this.getMouseXpos < 25) this.ball.position.x = 25;
             }
 
             this.ball.position.y = 50
@@ -291,11 +282,9 @@
       performance () {
         window.requestAnimationFrame(() => {
           const now = performance.now();
-          while (this.speeds.length > 0 && this.speeds[0] <= now - 1000) {
-            this.speeds.shift();
-          }
+          while (this.speeds.length > 0 && this.speeds[0] <= now - 1000) this.speeds.shift();
           this.speeds.push(now);
-          this.fps = this.speeds.length;
+          this.fps = this.speeds.length; // fps가 20이하 일 경우 성능 저하 (공이 맺히기 시작)
           this.performance()
         })
       },
@@ -342,9 +331,9 @@
         Composite: Composite,
         Events: Events,
         renderOptions: {
-          width: 400,
-          height: 600,
-          pixelRatio: '0.8',
+          width: 480,
+          height: 720,
+          pixelRatio: 'auto',
           wireframes: false,
           showDebug: false,
           showBroadphase: false,
