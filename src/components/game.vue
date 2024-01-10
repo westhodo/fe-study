@@ -58,18 +58,6 @@
     Events
   } from "matter-js"
 
-  import icon1 from "../assets/img/1.png"
-  import icon2 from "../assets/img/2.png"
-  import icon3 from "../assets/img/3.png"
-  import icon4 from "../assets/img/4.png"
-  import icon5 from "../assets/img/5.png"
-  import icon6 from "../assets/img/6.png"
-  import icon7 from "../assets/img/7.png"
-  import icon8 from "../assets/img/8.png"
-  import icon9 from "../assets/img/9.png"
-  import icon10 from "../assets/img/10.png"
-  import icon11 from "../assets/img/11.png"
-
   export default {
     name: "game",
     components: {},
@@ -127,7 +115,7 @@
         this.engine.timing.timeScale = 1
         this.score = 0
 
-        while (this.engine.world.bodies.length > 4) this.engine.world.bodies.pop()
+        while (this.engine.world.bodies.length > 3) this.engine.world.bodies.pop()
 
         this.createBall(1)
       },
@@ -136,28 +124,23 @@
       },
       createBall(size) {
         this.ball = this.newBall(this.render.options.width / 2, 50, size)
-        this.ball.collisionFilter = {
-          group: -1,
-          category: 2,
-          mask: 0,
-        }
+        this.ball.collisionFilter = { group: -1, category: 2, mask: 0 }
 
         this.World.add(this.engine.world, this.ball)
       },
       newBall(x, y, size) {
         const ball = this.Bodies.circle(x, y, size * 10, {
+          size: size,
+          createdAt:  Date.now(),
+          friction: 0.1,
           render: {
             sprite: {
-              texture: this.iconArray[size - 1],
+              texture: require(`../assets/img/${size}.png`),
               xScale: size / 12.75,
               yScale: size / 12.75,
             },
           },
         })
-        ball.size = size
-        ball.createdAt = Date.now()
-        ball.restitution = 0.3
-        ball.friction = 0.1
 
         return ball
       },
@@ -310,7 +293,6 @@
         isMouseEvt: false,
         fps: 100,
         updateSize: 1,
-        iconArray: [icon1, icon2, icon3, icon4, icon5, icon6, icon7, icon8, icon9, icon10, icon11],
         isMobile: false,
         zoom: null,
         speeds: [],
@@ -333,7 +315,7 @@
         renderOptions: {
           width: 480,
           height: 720,
-          pixelRatio: 'auto',
+          pixelRatio: window.devicePixelRatio,
           wireframes: false,
           showDebug: false,
           showBroadphase: false,
