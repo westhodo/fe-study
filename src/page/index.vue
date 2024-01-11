@@ -1,0 +1,79 @@
+<template>
+    <main>
+      <div class="desktop" :class="{ 'wide': wideOpen }">
+        <app-header />
+        <img src="../assets/img/desktop/background.jpg" alt="">
+        <div
+          class="user"
+        >
+          <div class="photo"><img src="../assets/img/desktop/mimoji.jpg" alt=""></div>
+          <p class="name_output">{{ getUsername }}</p>
+          <div
+            v-if="!getUsername"
+          >
+            <input
+              type="text"
+              class="name_input"
+              placeholder="이름 입력"
+              v-model="username"
+              @keyup.enter="onPressEnter(username)"
+            >
+            <p class="info_text">Touch ID를 활성화 하려면 <br> 사용자 이름이 필요합니다.</p>
+          </div>
+        </div>
+        <ul class="file_list">
+          <li>
+            <router-link to="/donut-game">
+              <img src="../assets/img/desktop/folder.png" alt="">
+              <p>Donut</p>
+            </router-link>
+          </li>
+          <li>
+            <router-link to="/page-404">
+              <img src="../assets/img/desktop/folder.png" alt="">
+              <p>To-Do List</p>
+            </router-link>
+          </li>
+        </ul>
+        <app-nav />
+      </div>
+    </main>
+</template>
+
+<script>
+import appHeader from "../components/appHeader.vue"
+import appNav from "../components/appNav.vue"
+export default {
+  name: 'index',
+  components: {
+    'app-header': appHeader,
+    'app-nav': appNav
+  },
+  mounted () {
+    this.getUsername = localStorage.getItem('west-username')
+    if (this.getUsername) {
+      setTimeout(() => this.wideOpen = true, 500)
+    }
+  },
+  methods: {
+    onPressEnter (val) {
+      localStorage.setItem('west-username', val)
+      this.getUsername = localStorage.getItem('west-username')
+      setTimeout(() => {
+        this.wideOpen = true
+      }, 500)
+    }
+  },
+  data () {
+    return {
+      wideOpen: false,
+      username: '',
+      getUsername: ''
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+  @import url('../assets/scss/desktop.scss');
+</style>

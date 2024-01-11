@@ -1,0 +1,114 @@
+/*=============================================================
+  RE-SET
+=============================================================*/
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  border: 0;
+  outline: 0;
+  background-color: transparent;
+}
+
+/*=============================================================
+  HEADER
+=============================================================*/
+header {
+  color: #fff;
+  opacity: 0;
+  visibility: hidden;
+  width: 100%;
+  height: 25px;
+  line-height: 30px;
+  font-size: 12px;
+  background-color: rgba(0, 0, 0, .5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 10px;
+  transition: 1s;
+  button {
+    width: 50px;
+    height: inherit;
+    border-radius: 5px;
+    &:hover {
+      background-color: rgba(255, 255, 255, .3);
+    }
+    img {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+/*=============================================================
+  NAV
+=============================================================*/
+nav {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  visibility: hidden;
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 20px;
+  .bottom_list {
+    display: flex;
+    gap: 20px;
+    padding: 10px 20px;
+    li {
+      a {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        font-size: 12px;
+        gap: 4px;
+        img {
+          width: 52px;
+          height: 52px;
+          border-radius: 10px;
+          object-fit: cover;
+          background-color: #fff;
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.4);
+        }
+        p {
+          color: #fff;
+          word-break: break-all;
+        }
+      }
+    }
+  }
+}
+
+/*=============================================================
+  PAGE 404
+=============================================================*/
+.page_404 {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  iframe {
+    border: 0;
+    outline: none;
+    zoom: 3;
+  }
+}
