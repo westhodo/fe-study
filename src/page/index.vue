@@ -21,21 +21,8 @@
             <p class="info_text">Touch ID를 활성화 하려면 <br> 사용자 이름이 필요합니다.</p>
           </div>
         </div>
-        <ul class="file_list">
-          <li>
-            <router-link to="/donut-game">
-              <img src="../assets/img/desktop/folder.png" alt="">
-              <p>Donut</p>
-            </router-link>
-          </li>
-          <li>
-            <router-link to="/page-404">
-              <img src="../assets/img/desktop/folder.png" alt="">
-              <p>To-Do List</p>
-            </router-link>
-          </li>
-        </ul>
-        <app-nav />
+        <app-nav :navClass="'type1'" />
+        <app-nav :navClass="'type2'" :fileTitle="true" />
       </div>
     </main>
 </template>
