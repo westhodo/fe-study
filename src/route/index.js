@@ -6,7 +6,8 @@ import donutGame from '../page/donutGame'
 import toDoList from '../page/toDoList'
 
 const routes = [
-  { path: '/', name: 'index', component: index },
+  { path: '/', redirect: '/index' },
+  { path: '/index', name: 'index', component: index  },
   { path: '/page-404', name: 'page404', component: page404 },
   { path: '/donut-game', name: 'donut-game', component: donutGame },
   { path: '/to-do-list', name: 'to-do-list', component: toDoList },
