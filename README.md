@@ -1,4 +1,4 @@
-# Donut Game
+# FE STRUDY
 
 ## Project setup
 ```
