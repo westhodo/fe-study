@@ -37,7 +37,6 @@ export default {
   mounted () {
     this.getUsername = localStorage.getItem('west-username')
     if (this.getUsername) setTimeout(() => this.wideOpen = true, 1000)
-    else this.wideOpen = false
   },
   methods: {
     onPressEnter (val) {
@@ -56,5 +55,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import url('../assets/scss/desktop.scss');
+  @import '../assets/scss/desktop.scss';
 </style>

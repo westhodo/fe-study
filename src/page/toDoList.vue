@@ -10,5 +10,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import url('../assets/scss/todo.scss');
+  @import '../assets/scss/todo.scss';
 </style>

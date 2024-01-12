@@ -339,5 +339,5 @@
   }
 </script>
 <style lang="scss" scoped>
-  @import url('../assets/scss/donut.scss');
+  @import '../assets/scss/donut.scss';
 </style>
