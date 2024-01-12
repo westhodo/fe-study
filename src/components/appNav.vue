@@ -2,7 +2,7 @@
     <nav :class="navClass">
       <ul>
         <li>
-          <router-link to="/donut-game" target="_blank">
+          <router-link to="/donut-game">
             <div v-if="fileTitle">
               <img src="../assets/img/desktop/folder.png" alt="">
               <p>Donut Game</p>
@@ -11,8 +11,8 @@
           </router-link>
         </li>
         <li>
-          <router-link to="/page-404" target="_blank">
-            <div  v-if="fileTitle">
+          <router-link to="/page-404">
+            <div v-if="fileTitle">
               <img src="../assets/img/desktop/folder.png" alt="">
               <p>ToDo List</p>
             </div>
