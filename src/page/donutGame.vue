@@ -224,7 +224,7 @@
           this.Body.setVelocity(this.ball, { x: 0, y: (100 / this.fps) * 5.5 })
           this.ball = null
 
-          this.updateSize = Math.ceil(Math.random() * 10)
+          this.updateSize = Math.ceil(Math.random() * 3)
 
           setTimeout(() => this.createBall(this.updateSize), 500)
         }
