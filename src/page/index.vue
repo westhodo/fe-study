@@ -3,9 +3,7 @@
       <div class="desktop" :class="{ 'wide': wideOpen }">
         <app-header />
         <img src="../assets/img/desktop/background.jpg" alt="">
-        <div
-          class="user"
-        >
+        <div class="user">
           <div class="photo"><img src="../assets/img/desktop/mimoji.jpg" alt=""></div>
           <p class="name_output">{{ getUsername }}</p>
           <div
@@ -21,8 +19,8 @@
             <p class="info_text">Touch ID를 활성화 하려면 <br> 사용자 이름이 필요합니다.</p>
           </div>
         </div>
+        <app-nav :navClass="'type2'" :fileTitle="true"/>
         <app-nav :navClass="'type1'" />
-        <app-nav :navClass="'type2'" :fileTitle="true" />
       </div>
     </main>
 </template>
@@ -38,24 +36,20 @@ export default {
   },
   mounted () {
     this.getUsername = localStorage.getItem('west-username')
-    if (this.getUsername) {
-      setTimeout(() => this.wideOpen = true, 500)
-    }
+    if (this.getUsername) setTimeout(() => this.wideOpen = true, 1000)
+    else this.wideOpen = false
   },
   methods: {
     onPressEnter (val) {
       localStorage.setItem('west-username', val)
       this.getUsername = localStorage.getItem('west-username')
-      setTimeout(() => {
-        this.wideOpen = true
-      }, 500)
+      if (this.getUsername) setTimeout(() => this.wideOpen = true, 1000)
     }
   },
   data () {
     return {
       wideOpen: false,
-      username: '',
-      getUsername: ''
+      username: ''
     }
   }
 }

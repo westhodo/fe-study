@@ -3,20 +3,20 @@
       <ul>
         <li>
           <router-link to="/donut-game" target="_blank">
-            <img src="../assets/img/donut/1.png" alt="" v-if="!fileTitle">
-            <div v-else>
+            <div v-if="fileTitle">
               <img src="../assets/img/desktop/folder.png" alt="">
-              <p v-if="fileTitle">Donut Game</p>
+              <p>Donut Game</p>
             </div>
+            <img src="../assets/img/donut/1.png" alt="" v-else>
           </router-link>
         </li>
         <li>
           <router-link to="/page-404" target="_blank">
-            <img src="../assets/img/desktop/memo.png" alt="" v-if="!fileTitle">
-            <div v-else>
+            <div  v-if="fileTitle">
               <img src="../assets/img/desktop/folder.png" alt="">
-              <p v-if="fileTitle">ToDo List</p>
+              <p>ToDo List</p>
             </div>
+            <img src="../assets/img/desktop/memo.png" alt="" v-else>
           </router-link>
         </li>
       </ul>
