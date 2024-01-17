@@ -21,182 +21,33 @@ button {
   outline: 0;
   background-color: transparent;
 }
-
 /*=============================================================
-  HEADER
+  WINDOW BUTTON
 =============================================================*/
-header {
-  width: 100%;
-  height: 25px;
-  line-height: 30px;
-  background-color: rgba(0, 0, 0, .2);
-  display: flex;
+.window_btn {
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 0 10px;
-  transition: 1s;
+  gap: 8px;
   button {
-    color: #fff;
-    border-radius: 5px;
-    font-size: 12px;
-    padding: 0 5px;
-    &:nth-of-type(1) {
-      width: 50px;
-      height: inherit;
-    }
-    &:hover {
-      background-color: rgba(255, 255, 255, .3);
-    }
-    img {
-      width: 16px;
-      height: 16px;
-    }
-  }
-  + .tooltip {
-    opacity: 0;
-    visibility: hidden;
-    transition: .3s;
-    background-color: rgba(255, 255, 255, 0.4);
-    border-radius: 5px;
-    position: absolute;
-    left: 10px;
-    top: 25px;
-    font-size: 12px;
-    max-width: 200px;
-    width: 200px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
-    z-index: 3;
-    &.on {
-      opacity: 1;
-      visibility: visible;
-    }
-    li {
-      padding: 5px;
-      &.division {
-        padding: 0;
-        height: 1px;
-        width: 95%;
-        margin: 0 auto;
-        background-color: rgba(0, 0, 0, 0.2);
-      }
-      p {
-        padding: 5px 10px;
-      }
-      &:nth-of-type(1) {
-        p {
-          font-weight: 700;
-        }
-      }
-      &:not(&:nth-of-type(1)) {
-        p {
-          border-radius: 5px;
-          &:hover {
-            color: #fff;
-            background-color: #2692FB;
-            cursor: default;
-          }
-        }
-      }
-    }
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: 1px solid;
+    cursor: pointer;
+    &:nth-of-type(1) { background-color: #EC6A5E; border-color: #DA584C; }
+    &:nth-of-type(2) { background-color: #F3BE4F; border-color: #EBB54E; }
+    &:nth-of-type(3) { background-color: #28CC40; border-color: #2EBD40; }
   }
 }
-.dim {
-  opacity: 0;
-  visibility: hidden;
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: transparent;
-  z-index: 1;
-  &.on {
-    opacity: 1;
-    visibility: visible;
-  }
-}
-/*=============================================================
-  NAV
-=============================================================*/
-nav {
-  opacity: 0;
-  visibility: hidden;
-  ul {
-    display: flex;
-    gap: 20px;
-    padding: 10px 20px;
-    li {
-      a {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 100%;
-        height: 100%;
-        font-size: 12px;
-        gap: 4px;
-        div {
-          width: 100%;
-          text-align: center;
-        }
-        img {
-          width: 52px;
-          height: 52px;
-          border-radius: 10px;
-          object-fit: cover;
-        }
-        p {
-          color: #fff;
-          word-break: break-all;
-        }
-      }
-    }
-  }
-  &.type1 {
-    position: absolute;
-    border-radius: 20px;
-    background-color: rgba(255, 255, 255, 0.4);
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    ul {
-      li {
-        a {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          width: 100%;
-          height: 100%;
-          font-size: 12px;
-          gap: 4px;
-          img {
-            background-color: #fff;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.4);
-          }
-          p {
-            display: none;
-          }
-        }
-      }
-    }
-  }
-  &.type2 {
-    ul {
-      flex-direction: column;
-      align-items: flex-end;
-      padding: 20px;
-      li {
-        width: 70px;
-      }
-    }
-  }
-}
-
 /*=============================================================
   PAGE 404
 =============================================================*/
 .page_404 {
-  height: 100vh;
+  position: absolute;
+  top: 0;
+  background-color: #fff;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;

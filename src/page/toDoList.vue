@@ -1,40 +1,47 @@
 <template>
   <div class="todo_wrap">
-    <div
-      class="current_write"
-    >
-      <input
-        type="text"
-        v-model="writeTodo"
-        @keyup.enter="updateText"
-      >
+    <div class="layout_l">
+      <app-button />
+      <div class="empty_menu">
+        <h2>MEMO</h2>
+        <p>{{ getUsername }}의 MEMO</p>
+      </div>
     </div>
-
-    <ul class="to_do_list">
-      <li
-        v-for="(text, index) in todoList"
-        :key="index"
-        :class="{ 'fix': text.fixed }"
+    <div class="layout_r">
+      <div
+        class="current_write"
       >
-        <p v-if="!text.edit"> {{ text.desc }}</p>
-
         <input
           type="text"
-          v-show="text.edit"
-          v-model="text.desc"
+          v-model="writeTodo"
+          @keyup.enter="updateText"
+          placeholder="write text"
         >
-
-        <div class="btn_box" v-if="text.edit">
-          <button :id="index" @click="editCancelTodoItem"> Cancel </button>
-          <button :id="index" @click="delTodoItem"> Delete </button>
-          <button :id="index" @click="editDoneTodoItem"> Done </button>
-        </div>
-        <div class="btn_box" v-if="!text.edit">
-          <button :id="index" @click="editStartTodoItem"> Edit </button>
-          <button :id="index" @click="fixedTodoItem" class="fix_btn"> 📌 </button>
-        </div>
-      </li>
-    </ul>
+      </div>
+      <ul class="to_do_list">
+        <li
+          v-for="(text, index) in todoList"
+          :key="index"
+          :class="{ 'fix': text.fixed }"
+        >
+          <p v-if="!text.edit"> {{ text.desc }}</p>
+          <input
+            type="text"
+            v-show="text.edit"
+            v-model="text.desc"
+          >
+          <div class="btn_box" v-if="text.edit">
+            <button :id="index" @click="editCancelTodoItem"> Cancel </button>
+            <button :id="index" @click="delTodoItem"> Delete </button>
+            <button :id="index" @click="editDoneTodoItem"> Done </button>
+          </div>
+          <div class="btn_box" v-if="!text.edit">
+            <button :id="index" @click="editStartTodoItem"> Edit </button>
+            <button :id="index" @click="fixedTodoItem" class="fix_btn"> 📌 </button>
+          </div>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 <script>
@@ -43,11 +50,13 @@ import {
   reactive,
   onMounted
 } from "vue"
+import appButton from '../components/appButton.vue'
 
 export default {
   name: "HOME",
   setup() {
     const writeTodo = ref('')
+    let getUsername = ref(undefined)
     let todoList = reactive([])
 
     const updateText = (() => {
@@ -68,6 +77,7 @@ export default {
 
     const getTodoItem = onMounted(() => {
       const getItem = JSON.parse(localStorage.getItem('west-todo-item'))
+      getUsername.value = localStorage.getItem('west-username')
       if (getItem) todoList.push(...getItem)
     })
 
@@ -101,6 +111,7 @@ export default {
       todoList,
       writeTodo,
       getTodoItem,
+      getUsername,
       updateText,
       setTodoItem,
       delTodoItem,
@@ -109,6 +120,9 @@ export default {
       editCancelTodoItem,
       fixedTodoItem
     }
+  },
+  components: {
+    'app-button': appButton
   }
 }
 </script>

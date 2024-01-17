@@ -4,6 +4,7 @@
     class="donut_container"
     :class="{ 'pc' : !isMobile }"
   >
+      <app-button />
       <div
         class="overlay"
         :class="{ 'success' : complete}"
@@ -58,10 +59,13 @@
     Composite,
     Events
   } from "matter-js"
+  import appButton from '../components/appButton.vue'
 
   export default {
     name: "game",
-    components: {},
+    components: {
+      'app-button': appButton
+    },
     computed: {},
     mounted() {
       this.init()
@@ -186,12 +190,16 @@
       },
       afterRender () {
         const ctx = this?.$refs?.ctx?.getContext("2d");
-        if (!this.gameOver && this.isOverLine) {
-          ctx.strokeStyle = "#f55";
-          ctx.beginPath();
-          ctx.moveTo(0, 100);
-          ctx.lineTo(480, 100);
-          ctx.stroke();
+        if (this.$router.name === 'donut-game') {
+          if (!this.gameOver && this.isOverLine) {
+            ctx.strokeStyle = "#f55";
+            ctx.beginPath();
+            ctx.moveTo(0, 100);
+            ctx.lineTo(480, 100);
+            ctx.stroke();
+          }
+        } else {
+          return
         }
       },
       gameEnd () {
@@ -315,7 +323,7 @@
         Events: Events,
         renderOptions: {
           width: 480,
-          height: 720,
+          height: 630,
           pixelRatio: window.devicePixelRatio,
           wireframes: false,
           showDebug: false,

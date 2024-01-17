@@ -1,18 +1,9 @@
 <template>
-    <header :class="customClass">
-      <button @click="openTooltipHnalder">
-        <img src="../assets/img/desktop/apple.png" alt="">
-      </button>
-      <button class="acc">
-        <p>{{ nowTime }}</p>
-      </button>
-    </header>
-    <ul class="tooltip" :class="{ 'on': openTooltip }">
-      <li><p>이 Mac의 관하여</p></li>
-      <li class="division"></li>
-      <li @click="logout"><p>{{ this.$parent.getUsername }} 로그아웃...</p></li>
-    </ul>
-    <div class="dim" :class="{ 'on': openTooltip }" @click="closeTooltipHnalder"></div>
+    <div class="window_btn">
+      <button></button>
+      <button></button>
+      <button></button>
+    </div>
 </template>
 
 <script>
@@ -24,7 +15,7 @@ import {
 import { useRouter } from 'vue-router'
 
 export default {
-  name: 'app-header',
+  name: 'app-button',
   setup () {
     const instance = getCurrentInstance()
     const parent = instance.parent.proxy
