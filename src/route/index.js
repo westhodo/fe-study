@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 
 import index from '../page/index'
 import desktop from '../page/deskTop'
@@ -21,7 +21,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory('/fe-study/#/'),
+  history: createWebHashHistory('/fe-study/'),
   routes
 });
 
