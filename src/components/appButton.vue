@@ -1,74 +1,43 @@
 <template>
     <div class="window_btn">
-      <button></button>
-      <button></button>
-      <button></button>
+      <button @click="routeGoHome" title="닫기"></button>
+      <button @click="routeGoBack" title="뒤로가기"></button>
+      <button
+        @click="isMaximize"
+        :class="{ 'off' : disable }"
+        :title="disable ? '사용할 수 없음' : '화면 확대/축소'"
+      ></button>
     </div>
 </template>
 
 <script>
 import {
-  ref,
-  getCurrentInstance,
-  onMounted
+  getCurrentInstance
 } from "vue"
 import { useRouter } from 'vue-router'
 
 export default {
   name: 'app-button',
   setup () {
+
     const instance = getCurrentInstance()
-    const parent = instance.parent.proxy
-    const nowTime = ref('')
-    const openTooltip = ref(false)
-
-    onMounted(() => {
-      setInterval(updateTimeHandler, 1000);
-    })
-
-    const updateTimeHandler = (() => {
-      const date = new Date();
-      const years = date.getFullYear();
-      const month = String(date.getMonth() +1).padStart(2, "0")
-      const day = String(date.getDate()).padStart(2, "0")
-      const hour = String(date.getHours()).padStart(2, "0")
-      const min = String(date.getMinutes()).padStart(2, "0")
-      nowTime.value = `${years}년 ${month}월 ${day}일 ${hour}시 ${min}분`
-    })
-
-    const openTooltipHnalder = (() => openTooltip.value = true)
-    const closeTooltipHnalder = (() => openTooltip.value = false)
-
+    let parent = instance.parent.proxy
     const router = useRouter()
 
-    const logout = (() => {
-      closeTooltipHnalder()
-      instance.parent.parent.parent.proxy.currentOpen = false
-      parent.getUsername = undefined
-      parent.username = ''
-      localStorage.removeItem('west-todo-item')
-      localStorage.removeItem('west-username')
-      setTimeout(() => location.reload(true), 500)
-      router.push('/')
-    })
-
+    const routeGoHome = (() => router.push('/'))
+    const routeGoBack = (() => router.go(-1))
+    const isMaximize = (() => parent.maximize = !parent.maximize)
 
     return {
-      updateTimeHandler,
-      openTooltipHnalder,
-      closeTooltipHnalder,
-      logout,
-      openTooltip,
-      nowTime
+      routeGoHome,
+      routeGoBack,
+      isMaximize
     }
-
-
-
   },
   props: {
-    customClass : {
-      type: String,
-      default: ''
+    disable: {
+      type: Boolean,
+      default: false
     }
   }
 }

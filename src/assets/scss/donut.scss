@@ -1,6 +1,8 @@
 .donut_container {
   position: absolute;
   top: 0;
+  left: 50%;
+  transform: translateX(-50%);
   overflow: hidden;
   // position: fixed;
   width: 100%;
@@ -10,11 +12,16 @@
   align-items: center;
   justify-content: center;
   background-color: #000;
+  z-index: 4;
   &.pc {
     top: 25px;
-    width: 100%;
+    width: 480px;
+    height: 720px;
     text-align: center;
-    background-color: rgba(0, 0, 0, .3);
+    background-color: transparent;
+    .window_btn {
+      display: flex;
+    }
   }
   .overlay {
     position: absolute;
@@ -127,9 +134,10 @@
     }
   }
   .window_btn {
+    display: none;
     position: absolute;
-    top: 25px;
-    left: 30.7%;
+    top: 15px;
+    left: 0%;
     background-color: #F6F6F6;
     width: 480px;
     height: 30px;

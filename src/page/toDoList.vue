@@ -1,9 +1,12 @@
 <template>
-  <div class="todo_wrap">
+  <div class="todo_wrap" :class="{ 'max_wide' : maximize }">
     <div class="layout_l">
       <app-button />
       <div class="empty_menu">
-        <h2>MEMO</h2>
+        <h2>
+          MEMO
+          <button @click="deleteTodoItem">ALL CELAR</button>
+        </h2>
         <p>{{ getUsername }}의 MEMO</p>
       </div>
     </div>
@@ -15,8 +18,9 @@
           type="text"
           v-model="writeTodo"
           @keyup.enter="updateText"
-          placeholder="write text"
+          placeholder="Please enter text"
         >
+        <span>TOTAL : {{ todoList.length }} </span>
       </div>
       <ul class="to_do_list">
         <li
@@ -31,13 +35,13 @@
             v-model="text.desc"
           >
           <div class="btn_box" v-if="text.edit">
-            <button :id="index" @click="editCancelTodoItem"> Cancel </button>
-            <button :id="index" @click="delTodoItem"> Delete </button>
-            <button :id="index" @click="editDoneTodoItem"> Done </button>
+            <button :id="index" @click="delTodoItem"> 💣</button>
+            <button :id="index" @click="editCancelTodoItem"> ❌ </button>
+            <button :id="index" @click="editDoneTodoItem"> ⭕ </button>
           </div>
           <div class="btn_box" v-if="!text.edit">
-            <button :id="index" @click="editStartTodoItem"> Edit </button>
-            <button :id="index" @click="fixedTodoItem" class="fix_btn"> 📌 </button>
+            <button :id="index" @click="fixedTodoItem" class="fix_btn">✅</button>
+            <button :id="index" @click="editStartTodoItem"> 📝 </button>
           </div>
         </li>
       </ul>
@@ -48,13 +52,14 @@
 import {
   ref,
   reactive,
-  onMounted
+  onMounted,
 } from "vue"
 import appButton from '../components/appButton.vue'
 
 export default {
-  name: "HOME",
+  name: "To-do-list",
   setup() {
+    const maximize = ref(false)
     const writeTodo = ref('')
     let getUsername = ref(undefined)
     let todoList = reactive([])
@@ -66,8 +71,7 @@ export default {
     })
 
     const writeTextItem = ((text) => {
-      if (todoList.length > 10) return alert('MAX LIST')
-      else todoList.push({ desc: text, edit: false, fixed: false })
+      todoList.push({ desc: text, edit: false, fixed: false })
       setTodoItem()
     })
 
@@ -79,6 +83,11 @@ export default {
       const getItem = JSON.parse(localStorage.getItem('west-todo-item'))
       getUsername.value = localStorage.getItem('west-username')
       if (getItem) todoList.push(...getItem)
+    })
+
+    const deleteTodoItem = (() => {
+      todoList.splice(0, todoList.length)
+      localStorage.removeItem('west-todo-item')
     })
 
     const getIndex = ((evt) => { return parseInt(evt.target.id) })
@@ -102,12 +111,12 @@ export default {
 
     const fixedTodoItem = ((e) => {
       todoList[getIndex(e)].fixed = !todoList[getIndex(e)].fixed
-      todoList = [...todoList.filter(item => item.fixed), ...todoList.filter(item => !item.fixed)]
+      todoList.sort((a, b) => b.fixed - a.fixed)
       setTodoItem()
-      setTimeout(() => location.reload(true), 500)
     })
 
     return {
+      maximize,
       todoList,
       writeTodo,
       getTodoItem,
@@ -115,6 +124,7 @@ export default {
       updateText,
       setTodoItem,
       delTodoItem,
+      deleteTodoItem,
       editStartTodoItem,
       editDoneTodoItem,
       editCancelTodoItem,

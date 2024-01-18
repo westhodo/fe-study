@@ -55,8 +55,7 @@ export default {
       instance.parent.parent.parent.proxy.currentOpen = false
       parent.getUsername = undefined
       parent.username = ''
-      localStorage.removeItem('west-todo-item')
-      localStorage.removeItem('west-username')
+      localStorage.clear()
       setTimeout(() => location.reload(true), 500)
       router.push('/')
     })
@@ -133,7 +132,7 @@ header {
     max-width: 200px;
     width: 200px;
     box-shadow: 0 0 10px rgba(0, 0, 0, .2);
-    z-index: 3;
+    z-index: 5;
     &.on {
       opacity: 1;
       visibility: visible;

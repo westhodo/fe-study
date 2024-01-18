@@ -30,11 +30,11 @@ export default {
         icon: 'donut/10.png',
         path: '/donut-game'
       },
-      {
-        name: 'Error 404',
-        icon: '',
-        path: '/page-404'
-      },
+      // {
+      //   name: 'Error 404',
+      //   icon: '',
+      //   path: '/page-404'
+      // },
       {
         name: 'ToDo List',
         icon: 'desktop/memo.png',

@@ -1,7 +1,7 @@
 <template>
     <main>
-      <div class="desktop" :class="{ 'wide': currentOpen }">
-        <app-header :customClass="currentOpen ? 'open' : ''" />
+      <div class="desktop" :class="{ 'wide': currentOpen || getUsername, 'freeze': getUsername }">
+        <app-header :customClass="currentOpen || getUsername ? 'open' : ''" />
         <img src="../assets/img/desktop/background.jpg" alt="">
         <router-view />
         <app-nav :navClass="'type2'" :fileTitle="true"/>
@@ -19,7 +19,9 @@ export default {
   name: "index",
   setup() {
     let currentOpen = ref(false)
-    return { currentOpen }
+    let getUsername = ref(undefined)
+    getUsername.value = localStorage.getItem('west-username')
+    return { currentOpen, getUsername }
   },
   components: {
     'app-header': appHeader,

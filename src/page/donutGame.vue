@@ -4,7 +4,7 @@
     class="donut_container"
     :class="{ 'pc' : !isMobile }"
   >
-      <app-button />
+      <app-button disable />
       <div
         class="overlay"
         :class="{ 'success' : complete}"
