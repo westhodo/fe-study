@@ -32,23 +32,30 @@ export default {
     let getUsername = ref(undefined)
     const username = ref('')
 
+    const loginHandler = (() => {
+      if (getUsername.value) {
+        setTimeout(() => parent.currentOpen = true, 1000)
+        setTimeout(() => parent.getUsername = getUsername, 1000)
+      }
+    })
+
     const mounted = onMounted (() => {
       getUsername.value = localStorage.getItem('west-username')
-      if (getUsername.value) setTimeout(() => parent.currentOpen = true, 1000)
+      loginHandler()
     })
 
     const onPressEnter = ((val) => {
       localStorage.setItem('west-username', val)
       getUsername.value = localStorage.getItem('west-username')
-
-      if (getUsername.value !== null) setTimeout(() => parent.currentOpen = true, 1000)
+      loginHandler()
     })
 
     return {
       mounted,
-      onPressEnter,
       getUsername,
-      username
+      username,
+      onPressEnter,
+      loginHandler
     }
   }
 }
