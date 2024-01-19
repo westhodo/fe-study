@@ -71,6 +71,10 @@ nav {
     gap: 20px;
     padding: 10px 20px;
     li {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
       a {
         display: flex;
         flex-direction: column;

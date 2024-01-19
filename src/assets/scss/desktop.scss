@@ -50,6 +50,10 @@ main {
       z-index: -1;
       object-fit: cover;
       filter: blur(4px);
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
     }
     .screen {
       width: 100%;

@@ -1,14 +1,14 @@
 <template>
   <div
-    v-if="!isError"
     class="donut_container"
     :class="{ 'pc' : !isMobile }"
+    ref="root"
   >
       <app-button disable />
       <div
         class="overlay"
         :class="{ 'success' : complete}"
-        :style="`width:${this.renderOptions.width}px; height: ${this.renderOptions.height}px; zoom: ${isMobile ? zoom : 1};`"
+        :style="`width:${renderOptions.width}px; height: ${renderOptions.height}px; zoom: ${isMobile ? zoom : 1};`"
         v-if="gameOver || complete"
       >
         <div class="box">
@@ -28,7 +28,7 @@
         </div>
       </div>
 
-      <canvas ref="ctx"
+      <canvas ref="ctxRef" id="canvas"
         @mouseover="isMouseEvt = true"
         @mouseup="isClickEvt = false"
         @mousedown="isClickEvt = isMouseEvt"
@@ -41,100 +41,142 @@
       />
     </div>
 </template>
-
 <script>
   import {
     Engine,
     Render,
     Runner,
-    Common,
-    MouseConstraint,
-    Mouse,
     World,
-    Vertices,
-    Svg,
     Bodies,
     Body,
-    Composites,
     Composite,
     Events
   } from "matter-js"
+  import {
+    ref,
+    reactive,
+    // getCurrentInstance,
+    onMounted,
+    onUnmounted
+  } from "vue"
+  import { useRoute } from 'vue-router'
   import appButton from '../components/appButton.vue'
 
   export default {
-    name: "game",
-    components: {
-      'app-button': appButton
-    },
-    computed: {},
-    mounted() {
-      this.init()
-      window.addEventListener("resize", this.resize)
-    },
-    unmounted() {
-      window.removeEventListener("resize", this.resize);
-    },
-    methods: {
-      init () {
-        this.engine = this.Engine.create()
-        this.world = this.engine.world
+    name: "donut-game",
+    setup() {
+      const $route = useRoute()
+      const renderOptions = reactive ({
+        width: 480,
+        height: 630,
+        pixelRatio: window.devicePixelRatio,
+        wireframes: false,
+        showDebug: false,
+        showBroadphase: false,
+        showBounds: false,
+        showVelocity: false,
+        showCollisions: false,
+        showSeparations: false,
+        showAxes: false,
+        showPositions: false,
+        showAngleIndicator: false,
+        showIds: false,
+        showShadows: false,
+        showVertexNumbers: false,
+        showConvexHulls: false,
+        showInternalEdges: false,
+        showMousePosition: false
+      })
+      /* Game Acc */
+      let gameOver = ref(false)
+      let complete = ref(false)
+      let getMouseXpos = ref(null)
+      let isOverLine = ref(false)
+      let isClickEvt = ref(false)
+      let isMouseEvt = ref(false)
+      let fps = ref(100)
+      let updateSize = ref(1)
+      let isMobile = ref(false)
+      let zoom = ref(null)
+      let speeds = reactive([])
+      let ctxRef = ref(null)
+      let root = ref(null)
 
-        this.render = this.Render.create({
-          element: this.$el,
-          engine: this.engine,
-          canvas: this.$refs.ctx,
-          options: this.renderOptions
+      /* recycle Matter */
+      let ball = reactive([])
+      let world = reactive([])
+      let render = reactive([])
+      let engine = reactive([])
+
+      onMounted (() => {
+        engine = Engine.create()
+        world = engine.world
+        render = Render.create({
+          element: root.value,
+          engine: engine,
+          canvas: ctxRef.value,
+          options: renderOptions
         })
+        init ()
 
-        const xPos = this.renderOptions.width
-        const yPos = this.renderOptions.height
+        performanceHandler()
+        window.addEventListener("resize", resize)
+      })
+      onUnmounted (() => window.removeEventListener("resize", resize))
+
+      const init = (() => {
+        makeWallHandler()
+
+        Runner.run(engine)
+        Render.run(render)
+
+        start()
+        resize()
+
+        Events.on(engine, "beforeUpdate", beforeUpdate)
+        Events.on(engine, "collisionActive", crushBallEvtHandler)
+        Events.on(engine, "collisionStart", crushBallEvtHandler)
+        Events.on(render, "afterRender", afterRender)
+        Render.lookAt(render, {
+          min: { x: 0, y: 0 },
+          max: { x: renderOptions.width, y: renderOptions.height }
+        })
+      })
+
+      const makeWallHandler = (() => {
+        const xPos = renderOptions.width
+        const yPos = renderOptions.height
         const thick = 5
         const gap = 2
 
-        const bottom = this.Bodies.rectangle(xPos / 2, yPos, xPos, 50, this.customRender('transparent'))
-        const left = this.Bodies.rectangle(gap, yPos / 2, thick, xPos + yPos, this.customRender('transparent'))
-        const right = this.Bodies.rectangle(xPos - gap, yPos / 2, thick, xPos + yPos, this.customRender('transparent'))
+        const bottom = Bodies.rectangle(xPos / 2, yPos, xPos, 50, customRender('transparent'))
+        const left = Bodies.rectangle(gap, yPos / 2, thick, xPos + yPos, customRender('transparent'))
+        const right = Bodies.rectangle(xPos - gap, yPos / 2, thick, xPos + yPos, customRender('transparent'))
 
-        this.World.add(this.engine.world, [bottom, left, right])
+        World.add(world, [bottom, left, right])
+      })
 
-        this.Runner.run(this.engine)
-        this.Render.run(this.render)
+      const start = (() => {
+        gameOver.value = false
+        complete.value = false
+        engine.timing.timeScale = 1
 
-        this.Events.on(this.engine, "beforeUpdate", this.beforeUpdate)
-        this.start()
-        this.performance()
-        this.resize()
+        while (world.bodies.length > 3) world.bodies.pop()
 
-        this.Events.on(this.engine, "collisionActive", this.crushBallEvtHandler)
-        this.Events.on(this.engine, "collisionStart", this.crushBallEvtHandler)
-        this.Events.on(this.render, "afterRender", this.afterRender)
-        this.Render.lookAt(this.render, {
-          min: { x: 0, y: 0 },
-          max: { x: this.renderOptions.width, y: this.renderOptions.height }
-        })
-      },
-      start () {
-        this.gameOver = false
-        this.complete = false
-        this.ball = null
-        this.engine.timing.timeScale = 1
-        this.score = 0
+        createBall(1)
+      })
 
-        while (this.engine.world.bodies.length > 3) this.engine.world.bodies.pop()
+      const retry = (() => setTimeout(() => location.reload(true), 100))
 
-        this.createBall(1)
-      },
-      retry () {
-        window.setInterval('location.reload()', 100)
-      },
-      createBall(size) {
-        this.ball = this.newBall(this.render.options.width / 2, 50, size)
-        this.ball.collisionFilter = { group: -1, category: 2, mask: 0 }
+      const createBall = ((size) => {
+        ball = newBall(render.options.width / 2, 50, size)
+        ball.collisionFilter = { group: -1, category: 2, mask: 0 }
 
-        this.World.add(this.engine.world, this.ball)
-      },
-      newBall(x, y, size) {
-        const ball = this.Bodies.circle(x, y, size * 10, {
+        World.add(world, ball)
+      })
+
+      const newBall = ((x, y, size) => {
+        const ball = Bodies.circle(x, y, size * 10, {
           size: size,
           createdAt:  Date.now(),
           friction: 0.1,
@@ -148,201 +190,167 @@
         })
 
         return ball
-      },
-      customRender(color) {
+      })
+
+      const customRender = ((color) => {
         return {
           isStatic: true,
           render: {
             fillStyle: color
           }
         }
-      },
-      beforeUpdate () {
-          if (this.gameOver) return
+      })
 
-          if (this.ball) {
-            const gravity = this.engine.world.gravity
+      const beforeUpdate = (() => {
+          if (gameOver.value) return
 
-            this.Body.applyForce(this.ball, this.ball.position, {
-              x: -gravity.x * gravity.scale * this.ball.mass,
-              y: -gravity.y * gravity.scale * this.ball.mass,
+          if (ball) {
+            const gravity = world.gravity
+
+            Body.applyForce(ball, ball.position, {
+              x: -gravity.x * gravity.scale * ball.mass,
+              y: -gravity.y * gravity.scale * ball.mass,
             })
 
-            if (this.isClickEvt && this.getMouseXpos) {
-              this.ball.position.x = this.getMouseXpos
+            if (isClickEvt.value && getMouseXpos.value) {
+              ball.position.x = getMouseXpos.value
 
-              if (this.getMouseXpos > 455) this.ball.position.x = 455;
-              else if (this.getMouseXpos < 25) this.ball.position.x = 25;
+              if (getMouseXpos.value > 455) ball.position.x = 455;
+              else if (getMouseXpos.value < 25) ball.position.x = 25;
             }
 
-            this.ball.position.y = 50
+            ball.position.y = 50
           }
 
-          const bodies = Composite.allBodies(this.engine.world)
+          const bodies = Composite.allBodies(world)
           for (let i = 4; i < bodies.length; i++) {
-            this.body = bodies[i]
+            let body = bodies[i]
 
-            if (this.body.position.y < 100) {
-              if (this.body !== this.ball && Math.abs(this.body.velocity.x) < 0.2 && Math.abs(this.body.velocity.y) < 0.2) this.gameEnd()
+            if (body.position.y < 100) {
+              if (body !== ball && Math.abs(body.velocity.x) < 0.2 && Math.abs(body.velocity.y) < 0.2) gameEnd()
             }
           }
-          this.isOverLine = true
-      },
-      afterRender () {
-        const ctx = this?.$refs?.ctx?.getContext("2d");
-        if (this.$router.name === 'donut-game') {
-          if (!this.gameOver && this.isOverLine) {
-            ctx.strokeStyle = "#f55";
-            ctx.beginPath();
-            ctx.moveTo(0, 100);
-            ctx.lineTo(480, 100);
-            ctx.stroke();
+          isOverLine.value = true
+      })
+
+      const afterRender = (() => {
+        if ($route.name === 'donut-game') {
+            const canvas = document.querySelector('#canvas')
+            const ctx = canvas.getContext("2d")
+            if (!gameOver.value && isOverLine.value) {
+              ctx.strokeStyle = "#f55";
+              ctx.beginPath();
+              ctx.moveTo(0, 100);
+              ctx.lineTo(480, 100);
+              ctx.stroke();
           }
         } else {
           return
         }
-      },
-      gameEnd () {
-        this.gameOver = true;
-        this.engine.timing.timeScale = 0;
-      },
-      resize () {
-        this.isMobile = window.innerHeight / window.innerWidth >= 1.49
-        this.zoom = window.innerWidth / this.renderOptions.width
-        if (this.isMobile) this.$refs.ctx.style.zoom = this.zoom;
-        else  this.$refs.ctx.style.zoom = 1
-      },
-      touchEvtHandler (e) {
-        this.isClickEvt = true
-        this.getMouseXpos = e.touches[0].clientX / this.$refs.ctx.style.zoom;
-      },
-      mouseEvtHandler (e) {
-        if (this.gameOver) return
-        const rect = this.$refs.ctx.getBoundingClientRect()
-        if (this.isMobile) this.getMouseXpos = (e?.clientX || e?.touches[0]?.clientX) / this.$refs.ctx.style.zoom - rect.left
-        else this.getMouseXpos = e?.clientX - rect.left
-      },
-      clickEvtHandler () {
-        if (this.gameOver) return
+      })
 
-        if (this.ball) {
-          this.ball.createdAt = 0
-          this.ball.collisionFilter = { group: 0, category: 1, mask: -1, }
+      const gameEnd = (() => {
+        gameOver.value = true
+        engine.timing.timeScale = 0
+      })
 
-          this.Body.setVelocity(this.ball, { x: 0, y: (100 / this.fps) * 5.5 })
-          this.ball = null
+      const resize = (() => {
+        isMobile.value = window.innerHeight / window.innerWidth >= 1.49
+        zoom.value = window.innerWidth / renderOptions.width
+        if (isMobile.value) ctxRef.value.style.zoom = zoom;
+        else ctxRef.value.style.zoom = 1
+      })
 
-          this.updateSize = Math.ceil(Math.random() * 3)
+      const touchEvtHandler = ((e) => {
+        isClickEvt.value = true
+        getMouseXpos.value = e.touches[0].clientX / ctxRef.value.style.zoom;
+      })
 
-          setTimeout(() => this.createBall(this.updateSize), 500)
+      const mouseEvtHandler = ((e) => {
+        if (gameOver.value) return
+        const rect = ctxRef.value.getBoundingClientRect()
+        if (isMobile.value) getMouseXpos.value = (e?.clientX || e?.touches[0]?.clientX) / ctxRef.value.style.zoom - rect.left
+        else getMouseXpos.value = e?.clientX - rect.left
+      })
+
+      const clickEvtHandler = (() => {
+        if (gameOver.value) return
+
+        if (ball) {
+          ball.createdAt = 0
+          ball.collisionFilter = { group: 0, category: 1, mask: -1, }
+
+          Body.setVelocity(ball, { x: 0, y: (100 / fps.value) * 5.5 })
+          ball = null
+
+          updateSize = Math.ceil(Math.random() * 3)
+
+          setTimeout(() => createBall(updateSize), 500)
         }
-      },
-      crushBallEvtHandler (e) {
-        if (this.gameOver) return
+      })
+
+      const crushBallEvtHandler = ((e) => {
+        if (gameOver.value) return
 
         e.pairs.forEach((crush) => {
-          this.sumBalls = [crush.bodyA, crush.bodyB]
+          const sumBalls = [crush.bodyA, crush.bodyB]
 
-          if (!this.sumBalls[0].size || !this.sumBalls[1].size) return
+          if (!sumBalls[0].size || !sumBalls[1].size) return
 
-          if (this.sumBalls[0].size === this.sumBalls[1].size) {
-            const allBodies = this.Composite.allBodies(this.engine.world)
-            if (allBodies.includes(this.sumBalls[0]) && allBodies.includes(this.sumBalls[1])) {
+          if (sumBalls[0].size === sumBalls[1].size) {
+            const allBodies = Composite.allBodies(world)
+            if (allBodies.includes(sumBalls[0]) && allBodies.includes(sumBalls[1])) {
               if (
-                (Date.now() - this.sumBalls[0].createdAt < 100 ||
-                  Date.now() - this.sumBalls[1].createdAt < 100) &&
-                this.sumBalls[0].createdAt !== 0 &&
-                this.sumBalls[1].createdAt !== 0
+                (Date.now() - sumBalls[0].createdAt < 100 ||
+                  Date.now() - sumBalls[1].createdAt < 100) &&
+                sumBalls[0].createdAt !== 0 &&
+                sumBalls[1].createdAt !== 0
               ) return
 
-              this.World.remove(this.engine.world, this.sumBalls[0])
-              this.World.remove(this.engine.world, this.sumBalls[1])
+              World.remove(world, sumBalls[0])
+              World.remove(world, sumBalls[1])
 
-              this.World.add(
-                this.engine.world,
-                this.newBall(
-                  (this.sumBalls[0].position.x + this.sumBalls[1].position.x) / 2,
-                  (this.sumBalls[0].position.y + this.sumBalls[1].position.y) / 2,
-                  this.sumBalls[0].size === 11 ? 11 : this.sumBalls[0].size + 1
+              World.add(
+                world,
+                newBall(
+                  (sumBalls[0].position.x + sumBalls[1].position.x) / 2,
+                  (sumBalls[0].position.y + sumBalls[1].position.y) / 2,
+                  sumBalls[0].size === 11 ? 11 : sumBalls[0].size + 1
                 )
               )
-              if (this.sumBalls[0].size === 10) this.complete = true
+              if (sumBalls[0].size === 10) complete.value = true
             }
           }
         })
-      },
-      performance () {
+      })
+      const performanceHandler = (() => {
         window.requestAnimationFrame(() => {
-          const now = performance.now();
-          while (this.speeds.length > 0 && this.speeds[0] <= now - 1000) this.speeds.shift();
-          this.speeds.push(now);
-          this.fps = this.speeds.length; // fps가 20이하 일 경우 성능 저하 (공이 맺히기 시작)
-          this.performance()
+          const now = performance.now()
+          while (speeds.length > 0 && speeds[0] <= now - 1000) speeds.shift()
+          speeds.push(now)
+          fps.value = speeds.length // fps가 20이하 일 경우 성능 저하 (공이 맺히기 시작)
+          performanceHandler()
         })
-      },
-    },
-    data() {
+      })
+
       return {
-        /* recycle Matter */
-        ball: null,
-        world: undefined,
-        runner: undefined,
-        render: undefined,
-        engine: undefined,
-        mouseConstraint: undefined,
-        touch: false,
-        bodies: undefined,
-
-        /* Game Acc */
-        gameOver: false,
-        complete: false,
-        getMouseXpos: null,
-        isOverLine: false,
-        isClickEvt: false,
-        isMouseEvt: false,
-        fps: 100,
-        updateSize: 1,
-        isMobile: false,
-        zoom: null,
-        speeds: [],
-
-        /* import Matter */
-        Engine: Engine,
-        Render: Render,
-        Runner: Runner,
-        Common: Common,
-        MouseConstraint: MouseConstraint,
-        Mouse: Mouse,
-        World: World,
-        Vertices: Vertices,
-        Svg: Svg,
-        Bodies: Bodies,
-        Body: Body,
-        Composites: Composites,
-        Composite: Composite,
-        Events: Events,
-        renderOptions: {
-          width: 480,
-          height: 630,
-          pixelRatio: window.devicePixelRatio,
-          wireframes: false,
-          showDebug: false,
-          showBroadphase: false,
-          showBounds: false,
-          showVelocity: false,
-          showCollisions: false,
-          showSeparations: false,
-          showAxes: false,
-          showPositions: false,
-          showAngleIndicator: false,
-          showIds: false,
-          showShadows: false,
-          showVertexNumbers: false,
-          showConvexHulls: false,
-          showInternalEdges: false,
-          showMousePosition: false
-        },
+        isMouseEvt,
+        isClickEvt,
+        renderOptions,
+        root,
+        ctxRef,
+        complete,
+        gameOver,
+        isMobile,
+        init,
+        touchEvtHandler,
+        mouseEvtHandler,
+        clickEvtHandler,
+        retry
       }
+    },
+    components: {
+      'app-button': appButton
     }
   }
 </script>
