@@ -257,7 +257,7 @@
       const resize = (() => {
         isMobile.value = window.innerHeight / window.innerWidth >= 1.49
         zoom.value = window.innerWidth / renderOptions.width
-        if (isMobile.value) ctxRef.value.style.zoom = zoom;
+        if (isMobile.value) ctxRef.value.style.zoom = zoom.value;
         else ctxRef.value.style.zoom = 1
       })
 
