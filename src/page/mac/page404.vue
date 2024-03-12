@@ -11,7 +11,7 @@
 
 <script>
 import { ref } from "vue"
-import appButton from '../components/appButton.vue'
+import appButton from '../../components/appButton.vue'
 export default {
   name: 'page-404',
   setup () {

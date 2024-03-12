@@ -60,7 +60,7 @@
     onUnmounted
   } from "vue"
   import { useRoute } from 'vue-router'
-  import appButton from '../components/appButton.vue'
+  import appButton from '../../components/appButton.vue'
 
   export default {
     name: "donut-game",
@@ -182,7 +182,7 @@
           friction: 0.1,
           render: {
             sprite: {
-              texture: require(`../assets/img/donut/${size}.png`),
+              texture: require(`@/assets/img/donut/${size}.png`),
               xScale: size / 12.75,
               yScale: size / 12.75,
             },
@@ -355,5 +355,5 @@
   }
 </script>
 <style lang="scss" scoped>
-  @import '../assets/scss/donut.scss';
+  @import '@/assets/scss/donut.scss';
 </style>

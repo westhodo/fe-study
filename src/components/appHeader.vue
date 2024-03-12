@@ -57,9 +57,8 @@ export default {
       parent.username = ''
       localStorage.clear()
       setTimeout(() => location.reload(true), 500)
-      router.push('/')
+      router.push('/mac/desktop')
     })
-
 
     return {
       updateTimeHandler,
@@ -69,9 +68,6 @@ export default {
       openTooltip,
       nowTime
     }
-
-
-
   },
   props: {
     customClass : {
@@ -110,9 +106,9 @@ header {
     &:nth-of-type(1) {
       width: 50px;
       height: inherit;
-    }
-    &:hover {
-      background-color: rgba(255, 255, 255, .3);
+      &:hover {
+        background-color: rgba(255, 255, 255, .3);
+      }
     }
     img {
       width: 16px;

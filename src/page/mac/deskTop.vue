@@ -1,7 +1,7 @@
 <template>
     <div class="screen">
       <div class="user">
-        <div class="photo"><img src="../assets/img/desktop/mimoji.jpg" alt=""></div>
+        <div class="photo"><img src="@/assets/img/desktop/mimoji.jpg" alt=""></div>
         <p class="name_output">{{ getUsername }}</p>
         <div v-if="!getUsername">
           <input
@@ -62,5 +62,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import '../assets/scss/desktop.scss';
+  @import '@/assets/scss/desktop.scss';
 </style>

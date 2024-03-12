@@ -24,7 +24,7 @@ export default {
     let parent = instance.parent.proxy
     const router = useRouter()
 
-    const routeGoHome = (() => router.push('/'))
+    const routeGoHome = (() => router.push('/mac/desktop'))
     const routeGoBack = (() => router.go(-1))
     const isMaximize = (() => parent.maximize = !parent.maximize)
 

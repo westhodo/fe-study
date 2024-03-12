@@ -28,7 +28,7 @@ export default {
     navMenuList = [{
         name: 'Donut Game',
         icon: 'donut/10.png',
-        path: '/donut-game'
+        path: '/mac/donut-game'
       },
       // {
       //   name: 'Error 404',
@@ -38,7 +38,7 @@ export default {
       {
         name: 'ToDo List',
         icon: 'desktop/memo.png',
-        path: '/to-do-list'
+        path: '/mac/to-do-list'
       },
     ]
     if (instance.proxy.navClass === 'type2') navMenuList.map((nav) => nav.icon = '')

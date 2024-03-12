@@ -54,7 +54,7 @@ import {
   reactive,
   onMounted,
 } from "vue"
-import appButton from '../components/appButton.vue'
+import appButton from '../../components/appButton.vue'
 
 export default {
   name: "To-do-list",
@@ -137,5 +137,5 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-  @import '../assets/scss/todo.scss'
+  @import '@/assets/scss/todo.scss'
 </style>

@@ -2,7 +2,7 @@
     <main>
       <div class="desktop" :class="{ 'wide': currentOpen || getUsername, 'freeze': getUsername }">
         <app-header :customClass="currentOpen || getUsername ? 'open' : ''" />
-        <img src="../assets/img/desktop/background.jpg" alt="">
+        <img src="@/assets/img/desktop/background.jpg" alt="">
         <router-view />
         <app-nav :navClass="'type2'" :fileTitle="true"/>
         <app-nav :navClass="'type1'" />
@@ -12,8 +12,8 @@
 
 <script>
 import { ref } from "vue"
-import appHeader from "../components/appHeader.vue"
-import appNav from "../components/appNav.vue"
+import appHeader from "../../components/appHeader.vue"
+import appNav from "../../components/appNav.vue"
 
 export default {
   name: "index",
@@ -31,5 +31,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import '../assets/scss/desktop.scss';
+  @import '@/assets/scss/desktop.scss';
 </style>
