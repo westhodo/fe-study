@@ -97,9 +97,9 @@ export default {
     ])
 
     let writeData = reactive({
-      payment: '100,000',
-      period: 12,
-      rate: '4.3',
+      payment: '',
+      period: null,
+      rate: '0',
       rateOption: 'simple',
       customPeriod: null
     })
